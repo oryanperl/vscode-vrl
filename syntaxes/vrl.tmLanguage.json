@@ -1,0 +1,209 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "VRL",
+  "scopeName": "source.vrl",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#paths"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    },
+    {
+      "include": "#variables"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.vrl",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.vrl",
+          "match": "\\b(if|else|del|abort|log)\\b"
+        },
+        {
+          "name": "keyword.operator.vrl",
+          "match": "\\b(and|or|not)\\b"
+        },
+        {
+          "name": "storage.type.vrl",
+          "match": "\\b(string|int|float|bool|array|object|timestamp|null)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.vrl",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.vrl",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.vrl",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.vrl",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.vrl",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.vrl",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.vrl",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.vrl",
+          "match": "\\bnull\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.vrl",
+          "match": "\\b(parse_json|parse_syslog|parse_regex|parse_key_value|parse_csv|parse_timestamp|format_timestamp|to_string|to_int|to_float|to_bool|to_timestamp|to_unix_timestamp|contains|starts_with|ends_with|match|replace|split|join|length|upcase|downcase|strip_whitespace|strip_ansi_escape_codes|encode_base64|decode_base64|encode_percent|decode_percent|sha1|sha2|sha3|md5|hmac|uuid_v4|now|type|is_string|is_int|is_float|is_bool|is_array|is_object|is_timestamp|is_null|flatten|compact|sort|reverse|unique|merge|keys|values|has|get|set|remove|push|pop|slice|chunks|map_keys|map_values|filter|find|group_by|reduce|assert|exists|only_fields|log|del|abort)!?\\b"
+        }
+      ]
+    },
+    "paths": {
+      "patterns": [
+        {
+          "name": "variable.other.property.vrl",
+          "match": "\\.[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*"
+        },
+        {
+          "name": "variable.other.index.vrl",
+          "match": "\\[\\d+\\]|\\[\"[^\"]*\"\\]|\\['[^']*'\\]"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.vrl",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.comparison.vrl",
+          "match": "==|!=|<|<=|>|>="
+        },
+        {
+          "name": "keyword.operator.arithmetic.vrl",
+          "match": "\\+|-|\\*|/|%"
+        },
+        {
+          "name": "keyword.operator.logical.vrl",
+          "match": "&&|\\|\\||!"
+        },
+        {
+          "name": "keyword.operator.error-coalesce.vrl",
+          "match": "\\?\\?"
+        },
+        {
+          "name": "keyword.operator.error-propagation.vrl",
+          "match": "!"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.array.begin.vrl",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.definition.array.end.vrl",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.definition.object.begin.vrl",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.definition.object.end.vrl",
+          "match": "\\}"
+        },
+        {
+          "name": "punctuation.definition.parameters.begin.vrl",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.definition.parameters.end.vrl",
+          "match": "\\)"
+        },
+        {
+          "name": "punctuation.separator.comma.vrl",
+          "match": ","
+        },
+        {
+          "name": "punctuation.separator.colon.vrl",
+          "match": ":"
+        },
+        {
+          "name": "punctuation.separator.semicolon.vrl",
+          "match": ";"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.vrl",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

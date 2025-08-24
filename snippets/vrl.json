@@ -1,0 +1,161 @@
+{
+  "Parse JSON": {
+    "prefix": "parse_json",
+    "body": [
+      ". = parse_json!(.${1:field})"
+    ],
+    "description": "Parse JSON from a field"
+  },
+  "Parse Syslog": {
+    "prefix": "parse_syslog",
+    "body": [
+      ". = parse_syslog!(.${1:message})"
+    ],
+    "description": "Parse syslog message"
+  },
+  "Parse Regex": {
+    "prefix": "parse_regex",
+    "body": [
+      ". = parse_regex!(.${1:field}, r'${2:pattern}')"
+    ],
+    "description": "Parse field using regex pattern"
+  },
+  "Parse Key Value": {
+    "prefix": "parse_kv",
+    "body": [
+      ". = parse_key_value!(.${1:field})"
+    ],
+    "description": "Parse key-value pairs"
+  },
+  "Parse Timestamp": {
+    "prefix": "parse_timestamp",
+    "body": [
+      ".timestamp = parse_timestamp!(.${1:timestamp_field}, \"${2:%Y-%m-%d %H:%M:%S}\")"
+    ],
+    "description": "Parse timestamp with format"
+  },
+  "Format Timestamp": {
+    "prefix": "format_timestamp",
+    "body": [
+      ".formatted_time = format_timestamp!(.${1:timestamp}, \"${2:%Y-%m-%d %H:%M:%S}\")"
+    ],
+    "description": "Format timestamp"
+  },
+  "Delete Field": {
+    "prefix": "del",
+    "body": [
+      "del(.${1:field})"
+    ],
+    "description": "Delete a field"
+  },
+  "Log Message": {
+    "prefix": "log",
+    "body": [
+      "log(\"${1:message}\", level: \"${2:info}\")"
+    ],
+    "description": "Log a message"
+  },
+  "Type Check": {
+    "prefix": "is_string",
+    "body": [
+      "if is_string(.${1:field}) {",
+      "\t${2:# handle string}",
+      "}"
+    ],
+    "description": "Check if field is string"
+  },
+  "String Operations": {
+    "prefix": "string_ops",
+    "body": [
+      ".${1:new_field} = upcase(.${2:field})",
+      ".${3:another_field} = strip_whitespace(.${4:field})"
+    ],
+    "description": "Common string operations"
+  },
+  "Array Operations": {
+    "prefix": "array_ops",
+    "body": [
+      ".${1:new_array} = split(.${2:field}, \"${3:,}\")",
+      ".${4:joined} = join!(.${5:array_field}, \"${6: }\")"
+    ],
+    "description": "Common array operations"
+  },
+  "Conditional Assignment": {
+    "prefix": "if_assign",
+    "body": [
+      "if ${1:condition} {",
+      "\t.${2:field} = ${3:value}",
+      "}"
+    ],
+    "description": "Conditional field assignment"
+  },
+  "Error Handling": {
+    "prefix": "error_handle",
+    "body": [
+      ".${1:result} = ${2:parse_json(.field)} ?? ${3:default_value}"
+    ],
+    "description": "Handle errors with null coalescing"
+  },
+  "Merge Objects": {
+    "prefix": "merge",
+    "body": [
+      ". = merge(., {",
+      "\t\"${1:key}\": ${2:value}",
+      "})"
+    ],
+    "description": "Merge objects"
+  },
+  "Filter Array": {
+    "prefix": "filter",
+    "body": [
+      ".${1:filtered} = filter(.${2:array}) -> |${3:item}| {",
+      "\t${4:condition}",
+      "}"
+    ],
+    "description": "Filter array elements"
+  },
+  "Map Array": {
+    "prefix": "map",
+    "body": [
+      ".${1:mapped} = map(.${2:array}) -> |${3:item}| {",
+      "\t${4:transformation}",
+      "}"
+    ],
+    "description": "Map array elements"
+  },
+  "Encode Base64": {
+    "prefix": "encode_base64",
+    "body": [
+      ".${1:encoded} = encode_base64(.${2:field})"
+    ],
+    "description": "Encode field as base64"
+  },
+  "Decode Base64": {
+    "prefix": "decode_base64",
+    "body": [
+      ".${1:decoded} = decode_base64!(.${2:encoded_field})"
+    ],
+    "description": "Decode base64 field"
+  },
+  "Generate UUID": {
+    "prefix": "uuid",
+    "body": [
+      ".id = uuid_v4()"
+    ],
+    "description": "Generate UUID v4"
+  },
+  "Current Timestamp": {
+    "prefix": "now",
+    "body": [
+      ".timestamp = now()"
+    ],
+    "description": "Get current timestamp"
+  },
+  "Hash Field": {
+    "prefix": "hash",
+    "body": [
+      ".${1:hash} = ${2:sha2}(.${3:field})"
+    ],
+    "description": "Hash a field"
+  }
+}

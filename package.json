@@ -1,0 +1,187 @@
+{
+  "name": "vscode-vrl",
+  "displayName": "VRL Language Support",
+  "description": "Advanced Vector Remap Language (VRL) support for Visual Studio Code",
+  "version": "1.0.0",
+  "publisher": "vrl-extension",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters",
+    "Debuggers"
+  ],
+  "keywords": [
+    "vrl",
+    "vector",
+    "observability",
+    "data-transformation",
+    "rust"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vscode-vrl"
+  },
+  "activationEvents": [
+    "onLanguage:vrl"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "vrl",
+        "aliases": [
+          "VRL",
+          "Vector Remap Language",
+          "vrl"
+        ],
+        "extensions": [
+          ".vrl"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./assets/vrl-file-icon-light.svg",
+          "dark": "./assets/vrl-file-icon-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "vrl",
+        "scopeName": "source.vrl",
+        "path": "./syntaxes/vrl.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "VRL Configuration",
+      "properties": {
+        "vrl.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VSCode and the VRL language server."
+        },
+        "vrl.enableIntelliSense": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable IntelliSense features for VRL"
+        },
+        "vrl.enableErrorChecking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable compile-time error checking"
+        },
+        "vrl.maxErrorCount": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of errors to report"
+        },
+        "vrl.enableTypeHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show type hints inline"
+        },
+        "vrl.playground.url": {
+          "type": "string",
+          "default": "https://playground.vrl.dev/",
+          "description": "URL for VRL playground integration"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vrl.validateScript",
+        "title": "Validate VRL Script",
+        "category": "VRL"
+      },
+      {
+        "command": "vrl.openPlayground",
+        "title": "Open in VRL Playground",
+        "category": "VRL"
+      },
+      {
+        "command": "vrl.formatDocument",
+        "title": "Format VRL Document",
+        "category": "VRL"
+      },
+      {
+        "command": "vrl.showVectorDocs",
+        "title": "Open Vector Documentation",
+        "category": "VRL"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vrl.validateScript",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus && resourceExtname == .vrl"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "vrl.validateScript",
+          "when": "resourceExtname == .vrl",
+          "group": "vrl"
+        },
+        {
+          "command": "vrl.openPlayground",
+          "when": "resourceExtname == .vrl",
+          "group": "vrl"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "vrl.validateScript",
+          "when": "resourceExtname == .vrl",
+          "group": "vrl"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "vrl",
+        "path": "./snippets/vrl.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "18.x",
+    "@types/mocha": "^10.0.6",
+    "@types/glob": "^8.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2",
+    "mocha": "^10.2.0",
+    "glob": "^8.1.0",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.11"
+  }
+}
