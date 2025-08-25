@@ -1,9 +1,10 @@
 {
   "name": "vscode-vrl",
-  "displayName": "VRL Language Support",
-  "description": "Advanced Vector Remap Language (VRL) support for Visual Studio Code",
-  "version": "1.0.0",
+  "displayName": "Vector Remap Language (VRL) for VSCode",
+  "description": "Vector Remap Language (VRL) support for Visual Studio Code",
+  "version": "0.1.0",
   "publisher": "oryanp",
+  "icon": "assets/vector.ico",
   "author": {
     "name": "Oryan Perlmutter",
     "email": "oryan.perl1997@gmail.com"

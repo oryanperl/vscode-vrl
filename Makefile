@@ -107,11 +107,8 @@ publish: clean build
 		exit 1; \
 	fi
 	@echo "Loading secrets and publishing..."
-	@set -a && source .secrets && set +a
-	echo "Logging in to VS Code Marketplace..."
-	npx vsce login $$VSCE_PUBLISHER --pat $$VSCE_PAT
-	echo "Publishing package..."
-	npx vsce publish --pat $$VSCE_PAT
+	@echo "Publishing package with PAT..."
+	@source .secrets && npx vsce publish --pat $$VSCE_PAT
 	@echo "Extension published successfully!"
 
 # Development setup
