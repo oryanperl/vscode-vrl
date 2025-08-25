@@ -112,8 +112,12 @@
     "functions": {
       "patterns": [
         {
-          "name": "entity.name.function.vrl",
-          "match": "\\b(parse_json|parse_syslog|parse_regex|parse_key_value|parse_csv|parse_timestamp|format_timestamp|to_string|to_int|to_float|to_bool|to_timestamp|to_unix_timestamp|contains|starts_with|ends_with|match|replace|split|join|length|upcase|downcase|strip_whitespace|strip_ansi_escape_codes|encode_base64|decode_base64|encode_percent|decode_percent|sha1|sha2|sha3|md5|hmac|uuid_v4|now|type|is_string|is_int|is_float|is_bool|is_array|is_object|is_timestamp|is_null|flatten|compact|sort|reverse|unique|merge|keys|values|has|get|set|remove|push|pop|slice|chunks|map_keys|map_values|filter|find|group_by|reduce|assert|exists|only_fields|log|del|abort)!?\\b"
+          "name": "entity.name.function.fallible.vrl",
+          "match": "\\b(decode_base16|decode_base64|decode_charset|decode_gzip|decode_percent|encode_gzip|to_bool|to_float|to_int|to_regex|to_timestamp|parse_apache_log|parse_cef|parse_common_log|parse_csv|parse_grok|parse_groks|parse_json|parse_key_value|parse_nginx_log|parse_regex|parse_syslog|parse_timestamp|parse_url|parse_user_agent|decrypt|format_timestamp|assert|assert_eq|max|min|join)!?\\b"
+        },
+        {
+          "name": "entity.name.function.infallible.vrl",
+          "match": "\\b(append|chunks|compact|filter|flatten|length|push|reverse|slice|sort|unique|encode_base16|encode_base64|encode_charset|encode_percent|to_string|to_unix_timestamp|contains|downcase|ends_with|match|replace|split|starts_with|strip_ansi_escape_codes|strip_whitespace|strlen|upcase|hmac|md5|sha1|sha2|sha3|from_unix_timestamp|now|del|exists|get|has|keys|merge|remove|set|values|is_array|is_bool|is_float|is_int|is_null|is_object|is_string|is_timestamp|log|type|uuid_v4|abs|ceil|floor|round)\\b"
         }
       ]
     },
@@ -152,8 +156,12 @@
           "match": "\\?\\?"
         },
         {
-          "name": "keyword.operator.error-propagation.vrl",
-          "match": "!"
+          "name": "keyword.operator.error-propagation.vrl", 
+          "match": "(?<=\\w)!"
+        },
+        {
+          "name": "keyword.operator.fallible-function.vrl",
+          "match": "\\b(decode_base16|decode_base64|decode_charset|decode_gzip|decode_percent|encode_gzip|to_bool|to_float|to_int|to_regex|to_timestamp|parse_apache_log|parse_cef|parse_common_log|parse_csv|parse_grok|parse_groks|parse_json|parse_key_value|parse_nginx_log|parse_regex|parse_syslog|parse_timestamp|parse_url|parse_user_agent|decrypt|format_timestamp|assert|assert_eq|max|min|join)(?=\\s*[!\\(])"
         }
       ]
     },

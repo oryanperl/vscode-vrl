@@ -58,6 +58,12 @@ test: compile
 	@echo "Running tests..."
 	npm run test
 
+# Run unit tests (no VSCode UI)
+.PHONY: test-unit
+test-unit: compile
+	@echo "Running unit tests (headless)..."
+	npm run test:unit
+
 # Watch mode for development
 .PHONY: watch
 watch: deps
@@ -82,16 +88,31 @@ install: build
 .PHONY: uninstall
 uninstall:
 	@echo "Uninstalling VRL extension from VSCode..."
-	code --uninstall-extension vrl-extension.vscode-vrl
+	@code --uninstall-extension vrl-extension.vscode-vrl 2>/dev/null || echo "Extension not found or already uninstalled"
 	@echo "Extension uninstalled!"
+
+# Reinstall the extension (uninstall, rebuild, and install)
+.PHONY: reinstall
+reinstall: uninstall build install
+	@echo "Extension reinstalled successfully!"
+	@echo "Restart VSCode to activate the updated extension."
 
 
 # Publish to VSCode marketplace (requires proper publisher setup)
 .PHONY: publish
-publish: build test lint
+publish: clean build
 	@echo "Publishing extension to VSCode marketplace..."
-	@echo "Note: This requires proper publisher credentials"
-	npm run publish
+	@if [ ! -f .secrets ]; then \
+		echo "Error: .secrets file not found. Please create it with your VS Code marketplace credentials."; \
+		exit 1; \
+	fi
+	@echo "Loading secrets and publishing..."
+	@set -a && source .secrets && set +a
+	echo "Logging in to VS Code Marketplace..."
+	npx vsce login $$VSCE_PUBLISHER --pat $$VSCE_PAT
+	echo "Publishing package..."
+	npx vsce publish --pat $$VSCE_PAT
+	@echo "Extension published successfully!"
 
 # Development setup
 .PHONY: dev-setup
@@ -114,13 +135,16 @@ info:
 	@echo "Extension built: $(if $(wildcard *.vsix),✓ Yes,✗ No)"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  make         - Build the extension"
-	@echo "  make install - Build and install to VSCode"
-	@echo "  make clean   - Clean build artifacts"
-	@echo "  make test    - Run tests"
-	@echo "  make lint    - Run linter"
-	@echo "  make watch   - Start development watch mode"
-	@echo "  make info    - Show this information"
+	@echo "  make           - Build the extension"
+	@echo "  make install   - Build and install to VSCode"
+	@echo "  make uninstall - Remove extension from VSCode"
+	@echo "  make reinstall - Uninstall, rebuild, and reinstall"
+	@echo "  make clean     - Clean build artifacts"
+	@echo "  make test      - Run integration tests (opens VSCode)"
+	@echo "  make test-unit - Run unit tests (headless, no UI)"
+	@echo "  make lint      - Run linter"
+	@echo "  make watch     - Start development watch mode"
+	@echo "  make info      - Show this information"
 
 # Help target
 .PHONY: help

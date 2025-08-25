@@ -3,7 +3,11 @@
   "displayName": "VRL Language Support",
   "description": "Advanced Vector Remap Language (VRL) support for Visual Studio Code",
   "version": "1.0.0",
-  "publisher": "vrl-extension",
+  "publisher": "oryanp",
+  "author": {
+    "name": "Oryan Perlmutter",
+    "email": "oryan.perl1997@gmail.com"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
@@ -23,7 +27,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/vscode-vrl"
+    "url": "https://github.com/oryanperl/vscode-vrl"
   },
   "activationEvents": [
     "onLanguage:vrl"
@@ -161,27 +165,26 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js",
+    "test": "xvfb-maybe node ./out/test/runTest.js",
+    "test:unit": "npm run compile && mocha --ui tdd ./out/test/unit/functions.unit.test.js ./out/test/unit/syntax.simple.test.js",
+    "test:integration": "npm run compile && node ./src/test/integration/test-runner.js",
+    "test:headless": "npm run test:unit && npm run test:integration",
     "package": "vsce package",
     "publish": "vsce publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
-    "@types/node": "18.x",
-    "@types/mocha": "^10.0.6",
     "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.2",
-    "mocha": "^10.2.0",
-    "glob": "^8.1.0",
     "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^2.22.0"
-  },
-  "dependencies": {
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.11"
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.54.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.3.2",
+    "xvfb-maybe": "^0.2.1"
   }
 }

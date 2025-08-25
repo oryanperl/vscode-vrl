@@ -18,7 +18,6 @@ export class VrlCommandProvider {
         }
 
         try {
-            // Basic syntax validation (in a real implementation, this would use the VRL compiler)
             const errors = this.performBasicValidation(text);
             
             if (errors.length === 0) {
@@ -44,7 +43,6 @@ export class VrlCommandProvider {
                 : editor.document.getText(selection);
             
             if (text.trim()) {
-                // In a real implementation, you might encode the script and append it to the URL
                 const encodedScript = encodeURIComponent(text);
                 const fullUrl = `${playgroundUrl}?script=${encodedScript}`;
                 vscode.env.openExternal(vscode.Uri.parse(fullUrl));
@@ -100,33 +98,28 @@ export class VrlCommandProvider {
             const line = lines[i].trim();
             const lineNumber = i + 1;
 
-            // Skip empty lines and comments
             if (!line || line.startsWith('#')) {
                 continue;
             }
 
-            // Check for unmatched parentheses
             const openParens = (line.match(/\(/g) || []).length;
             const closeParens = (line.match(/\)/g) || []).length;
             if (openParens !== closeParens) {
                 errors.push(`Line ${lineNumber}: Unmatched parentheses`);
             }
 
-            // Check for unmatched braces
             const openBraces = (line.match(/\{/g) || []).length;
             const closeBraces = (line.match(/\}/g) || []).length;
             if (openBraces !== closeBraces) {
                 errors.push(`Line ${lineNumber}: Unmatched braces`);
             }
 
-            // Check for unmatched brackets
             const openBrackets = (line.match(/\[/g) || []).length;
             const closeBrackets = (line.match(/\]/g) || []).length;
             if (openBrackets !== closeBrackets) {
                 errors.push(`Line ${lineNumber}: Unmatched brackets`);
             }
 
-            // Check for proper function call syntax with exclamation marks
             if (line.includes('parse_') && !line.includes('!')) {
                 if (!line.includes('??')) {
                     errors.push(`Line ${lineNumber}: Parse functions should use '!' or null coalescing '??'`);
@@ -146,22 +139,18 @@ export class VrlCommandProvider {
         for (const line of lines) {
             const trimmed = line.trim();
             
-            // Skip empty lines
             if (!trimmed) {
                 formattedLines.push('');
                 continue;
             }
 
-            // Decrease indent for closing braces
             if (trimmed.startsWith('}')) {
                 indentLevel = Math.max(0, indentLevel - 1);
             }
 
-            // Add the line with proper indentation
             const indent = ' '.repeat(indentLevel * indentSize);
             formattedLines.push(indent + trimmed);
 
-            // Increase indent for opening braces
             if (trimmed.endsWith('{') || trimmed.includes('if ') && !trimmed.endsWith('}')) {
                 indentLevel++;
             }

@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 export class VrlHoverProvider implements vscode.HoverProvider {
     
     private readonly functionDocs: { [key: string]: { signature: string; description: string; example?: string } } = {
-        // Parsing functions
         'parse_json': {
             signature: 'parse_json!(field: string) -> object',
             description: 'Parses a JSON string into an object. This is a fallible function that requires error handling.',
@@ -30,7 +29,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             example: '.timestamp = parse_timestamp!(.time, "%Y-%m-%d %H:%M:%S")'
         },
 
-        // String functions
         'to_string': {
             signature: 'to_string(value: any) -> string',
             description: 'Converts any value to its string representation.',
@@ -62,7 +60,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             example: '.trimmed = strip_whitespace(.message)'
         },
 
-        // Type checking functions
         'is_string': {
             signature: 'is_string(value: any) -> bool',
             description: 'Checks if a value is a string.',
@@ -79,7 +76,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             example: 'if is_bool(.field) { .type = "boolean" }'
         },
 
-        // Utility functions
         'now': {
             signature: 'now() -> timestamp',
             description: 'Returns the current timestamp.',
@@ -96,7 +92,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             example: '.message_length = length(.message)'
         },
 
-        // Field manipulation
         'del': {
             signature: 'del(path: path) -> void',
             description: 'Deletes a field from the event.',
@@ -136,7 +131,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
 
         const word = document.getText(wordRange);
         
-        // Check if it's a function
         if (this.functionDocs[word]) {
             const func = this.functionDocs[word];
             const contents = new vscode.MarkdownString();
@@ -152,14 +146,12 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             return new vscode.Hover(contents, wordRange);
         }
 
-        // Check if it's a keyword
         if (this.keywordDocs[word]) {
             const contents = new vscode.MarkdownString();
             contents.appendMarkdown(`**${word}** - ${this.keywordDocs[word]}`);
             return new vscode.Hover(contents, wordRange);
         }
 
-        // Check if it's a field path
         const line = document.lineAt(position.line).text;
         const fieldMatch = line.match(/\\.([a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*)/);
         
@@ -170,7 +162,6 @@ export class VrlHoverProvider implements vscode.HoverProvider {
             return new vscode.Hover(contents, wordRange);
         }
 
-        // Provide hover for operators
         const operatorDocs: { [key: string]: string } = {
             '!': 'Error propagation operator - unwraps fallible function results',
             '??': 'Null coalescing operator - provides default value for null/error',

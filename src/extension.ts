@@ -10,25 +10,21 @@ let client: VrlLanguageClient;
 export function activate(context: vscode.ExtensionContext) {
     console.log('VRL extension is being activated');
 
-    // Initialize language client
     client = new VrlLanguageClient(context);
     
-    // Initialize providers
     const commandProvider = new VrlCommandProvider();
     const diagnosticsProvider = new VrlDiagnosticsProvider();
     const completionProvider = new VrlCompletionProvider();
     const hoverProvider = new VrlHoverProvider();
 
-    // Register completion provider
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             { scheme: 'file', language: 'vrl' },
             completionProvider,
-            '.', '(', '!'
+            '.', '(', '!', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
         )
     );
 
-    // Register hover provider
     context.subscriptions.push(
         vscode.languages.registerHoverProvider(
             { scheme: 'file', language: 'vrl' },
@@ -36,7 +32,6 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    // Register commands
     context.subscriptions.push(
         vscode.commands.registerCommand('vrl.validateScript', () => {
             commandProvider.validateScript();
@@ -61,10 +56,22 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Start language client
     client.start();
 
-    // Set up document validation on save
+    vscode.workspace.textDocuments.forEach(document => {
+        if (document.languageId === 'vrl') {
+            diagnosticsProvider.validateDocument(document);
+        }
+    });
+
+    context.subscriptions.push(
+        vscode.workspace.onDidOpenTextDocument((document) => {
+            if (document.languageId === 'vrl') {
+                diagnosticsProvider.validateDocument(document);
+            }
+        })
+    );
+
     context.subscriptions.push(
         vscode.workspace.onDidSaveTextDocument((document) => {
             if (document.languageId === 'vrl') {
@@ -73,7 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Set up validation on change (with debounce)
     let timeout: NodeJS.Timeout | undefined;
     context.subscriptions.push(
         vscode.workspace.onDidChangeTextDocument((event) => {

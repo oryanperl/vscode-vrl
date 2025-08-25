@@ -1,0 +1,18 @@
+# This file should show diagnostic errors
+
+# These lines should show errors for missing error handling:
+.result = parse_cef(.message)
+.data = parse_json(.input) 
+.timestamp = parse_timestamp(.date, "%Y-%m-%d")
+.number = to_int(.value)
+
+# These are correct - should not show errors:
+.good_result = parse_cef!(.message)
+.safe_data = parse_json(.input) ?? {}
+.parsed_time = parse_timestamp(.date, "%Y-%m-%d") ?? now()
+
+# This should show unknown function error:
+.bad = invalid_function(.data)
+
+# Test autocomplete by typing: parse_
+# Should show all parse functions including parse_cef

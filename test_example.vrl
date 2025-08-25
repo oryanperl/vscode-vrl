@@ -1,0 +1,66 @@
+# VRL Test File - Demonstrating all function categories
+
+# Parse functions (fallible - require error handling)
+.parsed_json = parse_json!(.raw_message)
+.parsed_data = parse_cef!(.input_data) 
+.parsed_log = parse_timestamp!(.log_line, "%Y-%m-%d")
+.parsed_text = parse_regex!(.text_field, r"\d+")
+.parsed_kv = parse_key_value!(.kv_string)
+
+# INVALID: These should show errors (missing error handling)
+.bad_data = parse_cef(.input)
+.bad_json = parse_json(.message)
+.bad_timestamp = parse_timestamp(.date, "%Y-%m-%d")
+
+# Parse functions with error handling using null coalescing
+.safe_json = parse_json(.maybe_json) ?? {}
+.safe_timestamp = parse_timestamp(.date_text, "%Y-%m-%d") ?? now()
+
+# String functions (infallible)
+.upper_text = upcase(.text)
+.clean_message = strip_whitespace(.message)
+.message_length = strlen(.message)
+
+# Array functions
+.items_array = split(.items, ",")
+.unique_items = unique(.items_array)
+.sorted_items = sort(.unique_items)
+
+# Encoding functions
+.encoded = encode_base64(.raw_data)
+.decoded = decode_base64!(.encoded_text)
+
+# Hash functions
+.message_hash = sha2(.message)
+.signature = hmac(.data, .key)
+
+# Type checking
+if is_string(.id) {
+    .id = to_int!(.id)
+}
+
+# Object manipulation
+del(.temp_field)
+.info.processed = true
+.info.timestamp = now()
+
+# Math functions
+.values = [100, 200, 150, 300]
+.max_val = max!(.values)
+.min_val = min!(.values)
+.avg_val = round(.total / length(.values), 2)
+
+# Conditional parsing with error handling
+if exists(.raw_text) {
+    .parsed = parse_regex!(.raw_text, r"\w+")
+}
+
+# Complex field manipulation
+.data_path = get(.info, ["data", "path"], "/")
+if contains(.data_path, "test") {
+    .is_test_data = true
+}
+
+# Text parsing
+.text_parts = parse_regex!(.input_text, r"(\w+)=(\w+)")
+.kv_pairs = parse_key_value!(.kv_string, "=", "&")

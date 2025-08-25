@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { VRL_FUNCTIONS, FALLIBLE_FUNCTIONS, VRL_FUNCTION_NAMES } from './vrlFunctions';
 
 export class VrlDiagnosticsProvider {
     private diagnosticCollection: vscode.DiagnosticCollection;
@@ -8,29 +9,32 @@ export class VrlDiagnosticsProvider {
     }
 
     public validateDocument(document: vscode.TextDocument): void {
+        console.log(`[VRL] Validating document: ${document.fileName}, language: ${document.languageId}`);
         const diagnostics: vscode.Diagnostic[] = [];
         const text = document.getText();
         const lines = text.split('\n');
+        
+        console.log(`[VRL] Document has ${lines.length} lines`);
+
+        this.checkDocumentSyntax(text, lines, diagnostics);
+        this.checkControlFlowSyntax(lines, diagnostics);
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const lineNumber = i;
 
-            // Skip empty lines and comments
             if (!line.trim() || line.trim().startsWith('#')) {
                 continue;
             }
-
-            // Check for syntax errors
-            this.checkSyntaxErrors(line, lineNumber, diagnostics);
             
-            // Check for semantic errors
             this.checkSemanticErrors(line, lineNumber, diagnostics);
-            
-            // Check for best practices
             this.checkBestPractices(line, lineNumber, diagnostics);
         }
 
+        console.log(`[VRL] Found ${diagnostics.length} diagnostics total`);
+        const errorCount = diagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error).length;
+        console.log(`[VRL] Found ${errorCount} error diagnostics`);
+        
         this.diagnosticCollection.set(document.uri, diagnostics);
     }
 
@@ -94,52 +98,58 @@ export class VrlDiagnosticsProvider {
     }
 
     private checkSemanticErrors(line: string, lineNumber: number, diagnostics: vscode.Diagnostic[]): void {
-        const fallibleFunctions = [
-            'parse_json', 'parse_syslog', 'parse_regex', 'parse_key_value', 'parse_csv',
-            'parse_timestamp', 'to_int', 'to_float', 'decode_base64', 'decode_percent'
-        ];
-
-        // Check for fallible functions without error handling
-        for (const func of fallibleFunctions) {
-            const funcPattern = new RegExp(`\\b${func}\\b`);
-            if (funcPattern.test(line)) {
-                const hasErrorHandling = line.includes('!') || line.includes('??');
+        for (const func of FALLIBLE_FUNCTIONS) {
+            const funcCallPattern = new RegExp(`\\b${func}\\s*\\(`);
+            const match = line.match(funcCallPattern);
+            
+            if (match) {
+                console.log(`[VRL] Found fallible function call: ${func} in line: ${line}`);
+                const hasErrorHandling = this.hasProperErrorHandling(line, func);
+                console.log(`[VRL] Has error handling: ${hasErrorHandling}`);
                 if (!hasErrorHandling) {
                     const startPos = line.indexOf(func);
                     const diagnostic = new vscode.Diagnostic(
                         new vscode.Range(lineNumber, startPos, lineNumber, startPos + func.length),
-                        `Fallible function '${func}' requires error handling with '!' or '??'`,
+                        `Fallible function '${func}' requires error handling. Use '${func}!(...)' to abort on error, '${func}(...) ?? default' for fallback, or 'result, err = ${func}(...)'`,
                         vscode.DiagnosticSeverity.Error
                     );
                     diagnostic.code = 'missing-error-handling';
-                    diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
+                    
+                    const fixes: vscode.CodeAction[] = [];
+                    
+                    const bangFix = new vscode.CodeAction(
+                        `Use ${func}!(...) - abort on error`,
+                        vscode.CodeActionKind.QuickFix
+                    );
+                    bangFix.edit = new vscode.WorkspaceEdit();
+                    bangFix.edit.replace(
+                        vscode.Uri.file(''), 
+                        new vscode.Range(lineNumber, startPos + func.length, lineNumber, startPos + func.length),
+                        '!'
+                    );
+                    fixes.push(bangFix);
+                    
+                    diagnostic.relatedInformation = [
+                        new vscode.DiagnosticRelatedInformation(
+                            new vscode.Location(vscode.Uri.file(''), new vscode.Range(lineNumber, startPos, lineNumber, startPos + func.length)),
+                            'Fallible functions must handle potential errors explicitly'
+                        )
+                    ];
+                    
                     diagnostics.push(diagnostic);
                 }
             }
         }
 
-        // Check for undefined functions
         const functionPattern = /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g;
-        const knownFunctions = [
-            'parse_json', 'parse_syslog', 'parse_regex', 'parse_key_value', 'parse_csv', 'parse_timestamp',
-            'format_timestamp', 'to_string', 'to_int', 'to_float', 'to_bool', 'to_timestamp', 'to_unix_timestamp',
-            'contains', 'starts_with', 'ends_with', 'match', 'replace', 'split', 'join', 'length',
-            'upcase', 'downcase', 'strip_whitespace', 'strip_ansi_escape_codes',
-            'encode_base64', 'decode_base64', 'encode_percent', 'decode_percent',
-            'sha1', 'sha2', 'sha3', 'md5', 'hmac', 'uuid_v4', 'now', 'type',
-            'is_string', 'is_int', 'is_float', 'is_bool', 'is_array', 'is_object', 'is_timestamp', 'is_null',
-            'flatten', 'compact', 'sort', 'reverse', 'unique', 'merge', 'keys', 'values', 'has', 'get', 'set',
-            'remove', 'push', 'pop', 'slice', 'chunks', 'map_keys', 'map_values', 'filter', 'find',
-            'group_by', 'reduce', 'assert', 'exists', 'only_fields', 'log', 'del', 'abort'
-        ];
 
         let match;
         while ((match = functionPattern.exec(line)) !== null) {
             const funcName = match[1];
-            if (!knownFunctions.includes(funcName)) {
+            if (!VRL_FUNCTION_NAMES.includes(funcName)) {
                 const diagnostic = new vscode.Diagnostic(
                     new vscode.Range(lineNumber, match.index, lineNumber, match.index + funcName.length),
-                    `Unknown function '${funcName}'`,
+                    `Unknown function '${funcName}'. Did you mean one of: ${this.getSimilarFunctions(funcName).join(', ')}?`,
                     vscode.DiagnosticSeverity.Error
                 );
                 diagnostic.code = 'unknown-function';
@@ -149,7 +159,6 @@ export class VrlDiagnosticsProvider {
     }
 
     private checkBestPractices(line: string, lineNumber: number, diagnostics: vscode.Diagnostic[]): void {
-        // Warn about using del() on root fields
         if (line.includes('del(.)')) {
             const startPos = line.indexOf('del(.)');
             const diagnostic = new vscode.Diagnostic(
@@ -161,7 +170,6 @@ export class VrlDiagnosticsProvider {
             diagnostics.push(diagnostic);
         }
 
-        // Suggest using null coalescing for better error handling
         const fallibleWithBang = /\b(parse_\w+|to_int|to_float|decode_\w+)!/;
         if (fallibleWithBang.test(line) && !line.includes('??')) {
             const match = line.match(fallibleWithBang);
@@ -177,7 +185,6 @@ export class VrlDiagnosticsProvider {
             }
         }
 
-        // Warn about potential performance issues with regex
         if (line.includes('parse_regex') && line.includes('.*')) {
             const diagnostic = new vscode.Diagnostic(
                 new vscode.Range(lineNumber, 0, lineNumber, line.length),
@@ -188,16 +195,161 @@ export class VrlDiagnosticsProvider {
             diagnostics.push(diagnostic);
         }
 
-        // Suggest field validation
-        const fieldAssignment = /\.\w+\s*=/;
-        if (fieldAssignment.test(line) && !line.includes('is_')) {
+    }
+
+    private hasProperErrorHandling(line: string, funcName: string): boolean {
+        const hasBang = new RegExp(`\\b${funcName}!\\s*\\(`).test(line);
+        const hasNullCoalescing = line.includes('??');
+        const hasExplicitErrorHandling = /\w+\s*,\s*\w+\s*=/.test(line);
+        
+        return hasBang || hasNullCoalescing || hasExplicitErrorHandling;
+    }
+    
+    private getSimilarFunctions(input: string): string[] {
+        return VRL_FUNCTION_NAMES
+            .filter(name => this.levenshteinDistance(input.toLowerCase(), name.toLowerCase()) <= 3)
+            .slice(0, 3);
+    }
+    
+    private levenshteinDistance(str1: string, str2: string): number {
+        const matrix = [];
+        
+        for (let i = 0; i <= str2.length; i++) {
+            matrix[i] = [i];
+        }
+        
+        for (let j = 0; j <= str1.length; j++) {
+            matrix[0][j] = j;
+        }
+        
+        for (let i = 1; i <= str2.length; i++) {
+            for (let j = 1; j <= str1.length; j++) {
+                if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        
+        return matrix[str2.length][str1.length];
+    }
+
+    private checkDocumentSyntax(text: string, lines: string[], diagnostics: vscode.Diagnostic[]): void {
+        let braceCount = 0;
+        let parenCount = 0;
+        let bracketCount = 0;
+        
+        let currentLine = 0;
+        let currentChar = 0;
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            
+            if (char === '\n') {
+                currentLine++;
+                currentChar = 0;
+                continue;
+            }
+            currentChar++;
+            
+            switch (char) {
+                case '{': braceCount++; break;
+                case '}': 
+                    braceCount--; 
+                    if (braceCount < 0) {
+                        const diagnostic = new vscode.Diagnostic(
+                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            'Unexpected closing brace - no matching opening brace',
+                            vscode.DiagnosticSeverity.Error
+                        );
+                        diagnostic.code = 'unmatched-closing-brace';
+                        diagnostics.push(diagnostic);
+                        braceCount = 0;
+                    }
+                    break;
+                case '(': parenCount++; break;
+                case ')': 
+                    parenCount--; 
+                    if (parenCount < 0) {
+                        const diagnostic = new vscode.Diagnostic(
+                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            'Unexpected closing parenthesis - no matching opening parenthesis',
+                            vscode.DiagnosticSeverity.Error
+                        );
+                        diagnostic.code = 'unmatched-closing-paren';
+                        diagnostics.push(diagnostic);
+                        parenCount = 0;
+                    }
+                    break;
+                case '[': bracketCount++; break;
+                case ']': 
+                    bracketCount--; 
+                    if (bracketCount < 0) {
+                        const diagnostic = new vscode.Diagnostic(
+                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            'Unexpected closing bracket - no matching opening bracket',
+                            vscode.DiagnosticSeverity.Error
+                        );
+                        diagnostic.code = 'unmatched-closing-bracket';
+                        diagnostics.push(diagnostic);
+                        bracketCount = 0;
+                    }
+                    break;
+            }
+        }
+        
+        if (braceCount > 0) {
             const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(lineNumber, 0, lineNumber, line.length),
-                'Consider validating field types before assignment',
-                vscode.DiagnosticSeverity.Hint
+                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                `Missing ${braceCount} closing brace${braceCount > 1 ? 's' : ''}`,
+                vscode.DiagnosticSeverity.Error
             );
-            diagnostic.code = 'suggest-type-validation';
+            diagnostic.code = 'missing-closing-brace';
             diagnostics.push(diagnostic);
+        }
+        
+        if (parenCount > 0) {
+            const diagnostic = new vscode.Diagnostic(
+                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                `Missing ${parenCount} closing parenthesis${parenCount > 1 ? 'es' : ''}`,
+                vscode.DiagnosticSeverity.Error
+            );
+            diagnostic.code = 'missing-closing-paren';
+            diagnostics.push(diagnostic);
+        }
+        
+        if (bracketCount > 0) {
+            const diagnostic = new vscode.Diagnostic(
+                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                `Missing ${bracketCount} closing bracket${bracketCount > 1 ? 's' : ''}`,
+                vscode.DiagnosticSeverity.Error
+            );
+            diagnostic.code = 'missing-closing-bracket';
+            diagnostics.push(diagnostic);
+        }
+    }
+
+    private checkControlFlowSyntax(lines: string[], diagnostics: vscode.Diagnostic[]): void {
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            const prevLine = i > 0 ? lines[i - 1].trim() : '';
+            
+            if (line.startsWith('else ') || line.startsWith('else if ') || line === 'else') {
+                if (prevLine.endsWith('}')) {
+                    const diagnostic = new vscode.Diagnostic(
+                        new vscode.Range(i, 0, i, line.length),
+                        "In VRL, 'else' and 'else if' must be on the same line as the closing '}'. Use: '} else {' or '} else if condition {'",
+                        vscode.DiagnosticSeverity.Error
+                    );
+                    diagnostic.code = 'vrl-else-same-line';
+                    diagnostics.push(diagnostic);
+                }
+            }
         }
     }
 
