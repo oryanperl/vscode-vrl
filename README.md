@@ -28,7 +28,6 @@ A comprehensive Visual Studio Code extension providing advanced support for VRL 
 ### 🛠 Commands & Tools
 
 - **Validate Script** (`Ctrl+Shift+V`): Comprehensive VRL script validation
-- **Open in Playground**: Send code to VRL playground for testing
 - **Format Document**: Auto-format VRL code with proper indentation
 - **Show Documentation**: Quick access to Vector documentation
 
@@ -109,8 +108,7 @@ Access settings through `File > Preferences > Settings` and search for "VRL":
     "vrl.enableIntelliSense": true,
     "vrl.enableErrorChecking": true,
     "vrl.enableTypeHints": true,
-    "vrl.maxErrorCount": 100,
-    "vrl.playground.url": "https://playground.vrl.dev/"
+    "vrl.maxErrorCount": 100
 }
 ```
 
@@ -204,5 +202,4 @@ MIT License - see LICENSE file for details.
 ## Support
 
 - [Vector Documentation](https://vector.dev/docs/reference/vrl/)
-- [VRL Playground](https://playground.vrl.dev/)
 - [Issues & Bug Reports](https://github.com/your-org/vscode-vrl/issues)

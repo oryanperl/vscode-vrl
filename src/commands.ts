@@ -30,54 +30,6 @@ export class VrlCommandProvider {
         }
     }
 
-    public async openPlayground(): Promise<void> {
-        const editor = vscode.window.activeTextEditor;
-        const config = vscode.workspace.getConfiguration('vrl');
-        const playgroundUrl = config.get<string>('playground.url', 'https://playground.vrl.dev/');
-
-        if (editor && editor.document.languageId === 'vrl') {
-            const selection = editor.selection;
-            const text = selection.isEmpty
-                ? editor.document.getText()
-                : editor.document.getText(selection);
-
-            if (text.trim()) {
-                // Try multiple encoding approaches since playground API is unclear
-                try {
-                    // First copy to clipboard as fallback
-                    await vscode.env.clipboard.writeText(text);
-
-                    // Try base64 encoding approach
-                    const base64Script = Buffer.from(text).toString('base64');
-                    let fullUrl = `${playgroundUrl}?code=${base64Script}`;
-
-                    // If that doesn't work, try URL encoding
-                    if (fullUrl.length > 8000) {
-                        // URL too long
-                        const encodedScript = encodeURIComponent(text);
-                        fullUrl = `${playgroundUrl}?script=${encodedScript}`;
-                    }
-
-                    vscode.env.openExternal(vscode.Uri.parse(fullUrl));
-                    vscode.window.showInformationMessage(
-                        'Code copied to clipboard and playground opened. Paste if not auto-loaded.'
-                    );
-                } catch (error) {
-                    // Fallback: just open playground and copy to clipboard
-                    await vscode.env.clipboard.writeText(text);
-                    vscode.env.openExternal(vscode.Uri.parse(playgroundUrl));
-                    vscode.window.showInformationMessage(
-                        'Code copied to clipboard. Paste it in the playground.'
-                    );
-                }
-            } else {
-                vscode.env.openExternal(vscode.Uri.parse(playgroundUrl));
-            }
-        } else {
-            vscode.env.openExternal(vscode.Uri.parse(playgroundUrl));
-        }
-    }
-
     public async formatDocument(): Promise<void> {
         const editor = vscode.window.activeTextEditor;
         if (!editor || editor.document.languageId !== 'vrl') {

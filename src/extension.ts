@@ -65,12 +65,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('vrl.openPlayground', () => {
-            commandProvider.openPlayground();
-        })
-    );
-
-    context.subscriptions.push(
         vscode.commands.registerCommand('vrl.formatDocument', () => {
             commandProvider.formatDocument();
         })

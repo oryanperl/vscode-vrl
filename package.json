@@ -2,7 +2,7 @@
     "name": "vscode-vrl",
     "displayName": "Vector Remap Language (VRL) for VSCode",
     "description": "Vector Remap Language (VRL) support for Visual Studio Code",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "oryanp",
     "icon": "assets/vector.ico",
     "author": {
@@ -94,11 +94,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Show type hints inline"
-                },
-                "vrl.playground.url": {
-                    "type": "string",
-                    "default": "https://playground.vrl.dev/",
-                    "description": "URL for VRL playground integration"
                 }
             }
         },
@@ -106,11 +101,6 @@
             {
                 "command": "vrl.validateScript",
                 "title": "Validate VRL Script",
-                "category": "VRL"
-            },
-            {
-                "command": "vrl.openPlayground",
-                "title": "Open in VRL Playground",
                 "category": "VRL"
             },
             {
@@ -136,11 +126,6 @@
             "editor/context": [
                 {
                     "command": "vrl.validateScript",
-                    "when": "resourceExtname == .vrl",
-                    "group": "vrl"
-                },
-                {
-                    "command": "vrl.openPlayground",
                     "when": "resourceExtname == .vrl",
                     "group": "vrl"
                 }
