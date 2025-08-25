@@ -5,30 +5,35 @@ A comprehensive Visual Studio Code extension providing advanced support for VRL 
 ## Features
 
 ### 🎨 Syntax Highlighting
+
 - Complete VRL syntax highlighting with proper tokenization
 - Support for functions, keywords, operators, strings, and comments
 - Field path highlighting with proper scoping
 - Error and fallible function highlighting
 
 ### 🧠 IntelliSense & Code Completion
+
 - Auto-completion for all VRL built-in functions
 - Context-aware field path suggestions
 - Function signatures with parameter hints
 - Smart snippets for common VRL patterns
 
 ### 🔍 Advanced Language Features
+
 - **Hover Information**: Detailed documentation for functions and keywords
 - **Real-time Diagnostics**: Syntax and semantic error detection
 - **Error Handling Validation**: Ensures proper use of fallible functions
 - **Best Practice Suggestions**: Performance and maintainability hints
 
 ### 🛠 Commands & Tools
+
 - **Validate Script** (`Ctrl+Shift+V`): Comprehensive VRL script validation
 - **Open in Playground**: Send code to VRL playground for testing
 - **Format Document**: Auto-format VRL code with proper indentation
 - **Show Documentation**: Quick access to Vector documentation
 
 ### 🎯 Code Quality
+
 - Real-time syntax error detection
 - Semantic validation for function calls
 - Warning system for potential issues
@@ -63,6 +68,7 @@ code --install-extension vscode-vrl-*.vsix
 ## Usage
 
 ### Basic Example
+
 Create a `.vrl` file and start typing:
 
 ```vrl
@@ -111,11 +117,13 @@ Access settings through `File > Preferences > Settings` and search for "VRL":
 ## Development
 
 ### Prerequisites
+
 - Node.js (16+)
 - Visual Studio Code
 - TypeScript
 
 ### Setup
+
 ```bash
 # Clone and setup
 git clone <repository-url>
@@ -130,6 +138,7 @@ make test
 ```
 
 ### Available Make Targets
+
 - `make` - Build the extension
 - `make install` - Build and install to VSCode
 - `make clean` - Clean build artifacts
@@ -143,6 +152,7 @@ make test
 This extension supports the complete VRL syntax including:
 
 ### Functions
+
 - **Parsing**: `parse_json`, `parse_syslog`, `parse_regex`, `parse_key_value`, `parse_csv`, `parse_timestamp`
 - **Type Conversion**: `to_string`, `to_int`, `to_float`, `to_bool`, `to_timestamp`
 - **String Manipulation**: `contains`, `starts_with`, `ends_with`, `replace`, `split`, `join`, `upcase`, `downcase`
@@ -152,6 +162,7 @@ This extension supports the complete VRL syntax including:
 - **Utilities**: `uuid_v4`, `now`, `type`, `length`, `assert`
 
 ### Language Features
+
 - Field path expressions (`.field.subfield`)
 - Error handling with `!` and `??` operators
 - Conditional statements (`if`, `else`)
@@ -169,16 +180,19 @@ This extension supports the complete VRL syntax including:
 ## Troubleshooting
 
 ### Extension Not Loading
+
 1. Check VSCode version compatibility (requires 1.85+)
 2. Reload VSCode: `Developer: Reload Window`
 3. Check console for errors: `Help > Toggle Developer Tools`
 
 ### Syntax Highlighting Issues
+
 1. Ensure file has `.vrl` extension
 2. Check language mode in status bar
 3. Try `View > Command Palette > Change Language Mode > VRL`
 
 ### IntelliSense Not Working
+
 1. Verify `vrl.enableIntelliSense` is true in settings
 2. Check for TypeScript errors: `make lint`
 3. Restart extension host: `Developer: Reload Window`

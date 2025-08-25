@@ -8,9 +8,9 @@ const mockVscode = {
         Error: 0,
         Warning: 1,
         Information: 2,
-        Hint: 3
+        Hint: 3,
     },
-    
+
     Diagnostic: class {
         constructor(range, message, severity) {
             this.range = range;
@@ -18,67 +18,67 @@ const mockVscode = {
             this.severity = severity;
         }
     },
-    
+
     Range: class {
         constructor(start, end) {
             this.start = start;
             this.end = end;
         }
     },
-    
+
     Position: class {
         constructor(line, character) {
             this.line = line;
             this.character = character;
         }
     },
-    
+
     Location: class {
         constructor(uri, range) {
             this.uri = uri;
             this.range = range;
         }
     },
-    
+
     DiagnosticRelatedInformation: class {
         constructor(location, message) {
             this.location = location;
             this.message = message;
         }
     },
-    
+
     CodeAction: class {
         constructor(title, kind) {
             this.title = title;
             this.kind = kind;
         }
     },
-    
+
     CodeActionKind: {
-        QuickFix: 'quickfix'
+        QuickFix: 'quickfix',
     },
-    
+
     WorkspaceEdit: class {
         replace(uri, range, text) {
             // Mock implementation
         }
     },
-    
+
     Uri: {
-        file: (path) => ({ path, scheme: 'file' })
+        file: (path) => ({ path, scheme: 'file' }),
     },
-    
+
     languages: {
         _globalDiagnostics: new Map(),
         createDiagnosticCollection: (name) => ({
-            set: function(uri, diagnostics) {
+            set: function (uri, diagnostics) {
                 const key = uri.path || uri.toString();
                 mockVscode.languages._globalDiagnostics.set(key, diagnostics);
             },
-            clear: function() {
+            clear: function () {
                 mockVscode.languages._globalDiagnostics.clear();
             },
-            dispose: function() {}
+            dispose: function () {},
         }),
         getDiagnostics: (uri) => {
             if (uri) {
@@ -86,15 +86,15 @@ const mockVscode = {
                 return mockVscode.languages._globalDiagnostics.get(key) || [];
             }
             return Array.from(mockVscode.languages._globalDiagnostics.entries());
-        }
-    }
+        },
+    },
 };
 
 // Set global vscode for test access
 global.vscode = mockVscode;
 
 // Intercept require calls
-Module.prototype.require = function(id) {
+Module.prototype.require = function (id) {
     if (id === 'vscode') {
         return mockVscode;
     }
@@ -108,16 +108,16 @@ const glob = require('glob');
 
 const mocha = new Mocha({
     ui: 'tdd',
-    color: true
+    color: true,
 });
 
 // Add test files
 const testFiles = glob.sync('./out/test/integration/*.integration.test.js');
-testFiles.forEach(file => {
+testFiles.forEach((file) => {
     mocha.addFile(path.resolve(file));
 });
 
 // Run tests
-mocha.run(failures => {
+mocha.run((failures) => {
     process.exit(failures ? 1 : 0);
 });

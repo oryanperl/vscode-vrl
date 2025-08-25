@@ -9,10 +9,7 @@ async function main() {
         await runTests({
             extensionDevelopmentPath,
             extensionTestsPath,
-            launchArgs: [
-                '--disable-extensions',
-                '--headless'
-            ]
+            launchArgs: ['--disable-extensions', '--headless'],
         });
     } catch (err) {
         console.error('Failed to run tests:', err);

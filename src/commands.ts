@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 
 export class VrlCommandProvider {
-    
     public async validateScript(): Promise<void> {
         const editor = vscode.window.activeTextEditor;
         if (!editor || editor.document.languageId !== 'vrl') {
@@ -11,7 +10,7 @@ export class VrlCommandProvider {
 
         const document = editor.document;
         const text = document.getText();
-        
+
         if (text.trim().length === 0) {
             vscode.window.showWarningMessage('Document is empty');
             return;
@@ -19,7 +18,7 @@ export class VrlCommandProvider {
 
         try {
             const errors = this.performBasicValidation(text);
-            
+
             if (errors.length === 0) {
                 vscode.window.showInformationMessage('✅ VRL script is valid!');
             } else {
@@ -35,17 +34,42 @@ export class VrlCommandProvider {
         const editor = vscode.window.activeTextEditor;
         const config = vscode.workspace.getConfiguration('vrl');
         const playgroundUrl = config.get<string>('playground.url', 'https://playground.vrl.dev/');
-        
+
         if (editor && editor.document.languageId === 'vrl') {
             const selection = editor.selection;
-            const text = selection.isEmpty 
-                ? editor.document.getText() 
+            const text = selection.isEmpty
+                ? editor.document.getText()
                 : editor.document.getText(selection);
-            
+
             if (text.trim()) {
-                const encodedScript = encodeURIComponent(text);
-                const fullUrl = `${playgroundUrl}?script=${encodedScript}`;
-                vscode.env.openExternal(vscode.Uri.parse(fullUrl));
+                // Try multiple encoding approaches since playground API is unclear
+                try {
+                    // First copy to clipboard as fallback
+                    await vscode.env.clipboard.writeText(text);
+
+                    // Try base64 encoding approach
+                    const base64Script = Buffer.from(text).toString('base64');
+                    let fullUrl = `${playgroundUrl}?code=${base64Script}`;
+
+                    // If that doesn't work, try URL encoding
+                    if (fullUrl.length > 8000) {
+                        // URL too long
+                        const encodedScript = encodeURIComponent(text);
+                        fullUrl = `${playgroundUrl}?script=${encodedScript}`;
+                    }
+
+                    vscode.env.openExternal(vscode.Uri.parse(fullUrl));
+                    vscode.window.showInformationMessage(
+                        'Code copied to clipboard and playground opened. Paste if not auto-loaded.'
+                    );
+                } catch (error) {
+                    // Fallback: just open playground and copy to clipboard
+                    await vscode.env.clipboard.writeText(text);
+                    vscode.env.openExternal(vscode.Uri.parse(playgroundUrl));
+                    vscode.window.showInformationMessage(
+                        'Code copied to clipboard. Paste it in the playground.'
+                    );
+                }
             } else {
                 vscode.env.openExternal(vscode.Uri.parse(playgroundUrl));
             }
@@ -63,10 +87,10 @@ export class VrlCommandProvider {
 
         const document = editor.document;
         const text = document.getText();
-        
+
         try {
             const formattedText = this.formatVrlCode(text);
-            
+
             if (formattedText !== text) {
                 const edit = new vscode.WorkspaceEdit();
                 const range = new vscode.Range(
@@ -74,7 +98,7 @@ export class VrlCommandProvider {
                     document.positionAt(text.length)
                 );
                 edit.replace(document.uri, range, formattedText);
-                
+
                 await vscode.workspace.applyEdit(edit);
                 vscode.window.showInformationMessage('Document formatted successfully');
             } else {
@@ -92,8 +116,28 @@ export class VrlCommandProvider {
 
     private performBasicValidation(text: string): string[] {
         const errors: string[] = [];
-        const lines = text.split('\n');
 
+        // Global bracket matching (proper multiline support)
+        const openParens = (text.match(/\(/g) || []).length;
+        const closeParens = (text.match(/\)/g) || []).length;
+        if (openParens !== closeParens) {
+            errors.push(`Unmatched parentheses: ${openParens} opening, ${closeParens} closing`);
+        }
+
+        const openBraces = (text.match(/\{/g) || []).length;
+        const closeBraces = (text.match(/\}/g) || []).length;
+        if (openBraces !== closeBraces) {
+            errors.push(`Unmatched braces: ${openBraces} opening, ${closeBraces} closing`);
+        }
+
+        const openBrackets = (text.match(/\[/g) || []).length;
+        const closeBrackets = (text.match(/\]/g) || []).length;
+        if (openBrackets !== closeBrackets) {
+            errors.push(`Unmatched brackets: ${openBrackets} opening, ${closeBrackets} closing`);
+        }
+
+        // Check for unterminated strings
+        const lines = text.split('\n');
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             const lineNumber = i + 1;
@@ -102,27 +146,18 @@ export class VrlCommandProvider {
                 continue;
             }
 
-            const openParens = (line.match(/\(/g) || []).length;
-            const closeParens = (line.match(/\)/g) || []).length;
-            if (openParens !== closeParens) {
-                errors.push(`Line ${lineNumber}: Unmatched parentheses`);
+            // Check for unterminated string literals
+            const doubleQuotes = (line.match(/"/g) || []).length;
+            if (doubleQuotes % 2 !== 0) {
+                errors.push(`Line ${lineNumber}: Unterminated string literal`);
             }
 
-            const openBraces = (line.match(/\{/g) || []).length;
-            const closeBraces = (line.match(/\}/g) || []).length;
-            if (openBraces !== closeBraces) {
-                errors.push(`Line ${lineNumber}: Unmatched braces`);
-            }
-
-            const openBrackets = (line.match(/\[/g) || []).length;
-            const closeBrackets = (line.match(/\]/g) || []).length;
-            if (openBrackets !== closeBrackets) {
-                errors.push(`Line ${lineNumber}: Unmatched brackets`);
-            }
-
-            if (line.includes('parse_') && !line.includes('!')) {
-                if (!line.includes('??')) {
-                    errors.push(`Line ${lineNumber}: Parse functions should use '!' or null coalescing '??'`);
+            // Only flag parse functions without error handling if they're standalone calls
+            if (line.match(/\bparse_\w+\s*\(/)) {
+                if (!line.includes('!') && !line.includes('??')) {
+                    errors.push(
+                        `Line ${lineNumber}: Parse functions should use '!' or null coalescing '??'`
+                    );
                 }
             }
         }
@@ -138,7 +173,7 @@ export class VrlCommandProvider {
 
         for (const line of lines) {
             const trimmed = line.trim();
-            
+
             if (!trimmed) {
                 formattedLines.push('');
                 continue;
@@ -151,7 +186,7 @@ export class VrlCommandProvider {
             const indent = ' '.repeat(indentLevel * indentSize);
             formattedLines.push(indent + trimmed);
 
-            if (trimmed.endsWith('{') || trimmed.includes('if ') && !trimmed.endsWith('}')) {
+            if (trimmed.endsWith('{') || (trimmed.includes('if ') && !trimmed.endsWith('}'))) {
                 indentLevel++;
             }
         }

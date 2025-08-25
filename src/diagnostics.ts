@@ -9,11 +9,13 @@ export class VrlDiagnosticsProvider {
     }
 
     public validateDocument(document: vscode.TextDocument): void {
-        console.log(`[VRL] Validating document: ${document.fileName}, language: ${document.languageId}`);
+        console.log(
+            `[VRL] Validating document: ${document.fileName}, language: ${document.languageId}`
+        );
         const diagnostics: vscode.Diagnostic[] = [];
         const text = document.getText();
         const lines = text.split('\n');
-        
+
         console.log(`[VRL] Document has ${lines.length} lines`);
 
         this.checkDocumentSyntax(text, lines, diagnostics);
@@ -26,19 +28,25 @@ export class VrlDiagnosticsProvider {
             if (!line.trim() || line.trim().startsWith('#')) {
                 continue;
             }
-            
+
             this.checkSemanticErrors(line, lineNumber, diagnostics);
             this.checkBestPractices(line, lineNumber, diagnostics);
         }
 
         console.log(`[VRL] Found ${diagnostics.length} diagnostics total`);
-        const errorCount = diagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error).length;
+        const errorCount = diagnostics.filter(
+            (d) => d.severity === vscode.DiagnosticSeverity.Error
+        ).length;
         console.log(`[VRL] Found ${errorCount} error diagnostics`);
-        
+
         this.diagnosticCollection.set(document.uri, diagnostics);
     }
 
-    private checkSyntaxErrors(line: string, lineNumber: number, diagnostics: vscode.Diagnostic[]): void {
+    private checkSyntaxErrors(
+        line: string,
+        lineNumber: number,
+        diagnostics: vscode.Diagnostic[]
+    ): void {
         const trimmedLine = line.trim();
 
         // Check for unmatched parentheses
@@ -97,11 +105,15 @@ export class VrlDiagnosticsProvider {
         }
     }
 
-    private checkSemanticErrors(line: string, lineNumber: number, diagnostics: vscode.Diagnostic[]): void {
+    private checkSemanticErrors(
+        line: string,
+        lineNumber: number,
+        diagnostics: vscode.Diagnostic[]
+    ): void {
         for (const func of FALLIBLE_FUNCTIONS) {
             const funcCallPattern = new RegExp(`\\b${func}\\s*\\(`);
             const match = line.match(funcCallPattern);
-            
+
             if (match) {
                 console.log(`[VRL] Found fallible function call: ${func} in line: ${line}`);
                 const hasErrorHandling = this.hasProperErrorHandling(line, func);
@@ -114,28 +126,41 @@ export class VrlDiagnosticsProvider {
                         vscode.DiagnosticSeverity.Error
                     );
                     diagnostic.code = 'missing-error-handling';
-                    
+
                     const fixes: vscode.CodeAction[] = [];
-                    
+
                     const bangFix = new vscode.CodeAction(
                         `Use ${func}!(...) - abort on error`,
                         vscode.CodeActionKind.QuickFix
                     );
                     bangFix.edit = new vscode.WorkspaceEdit();
                     bangFix.edit.replace(
-                        vscode.Uri.file(''), 
-                        new vscode.Range(lineNumber, startPos + func.length, lineNumber, startPos + func.length),
+                        vscode.Uri.file(''),
+                        new vscode.Range(
+                            lineNumber,
+                            startPos + func.length,
+                            lineNumber,
+                            startPos + func.length
+                        ),
                         '!'
                     );
                     fixes.push(bangFix);
-                    
+
                     diagnostic.relatedInformation = [
                         new vscode.DiagnosticRelatedInformation(
-                            new vscode.Location(vscode.Uri.file(''), new vscode.Range(lineNumber, startPos, lineNumber, startPos + func.length)),
+                            new vscode.Location(
+                                vscode.Uri.file(''),
+                                new vscode.Range(
+                                    lineNumber,
+                                    startPos,
+                                    lineNumber,
+                                    startPos + func.length
+                                )
+                            ),
                             'Fallible functions must handle potential errors explicitly'
-                        )
+                        ),
                     ];
-                    
+
                     diagnostics.push(diagnostic);
                 }
             }
@@ -148,7 +173,12 @@ export class VrlDiagnosticsProvider {
             const funcName = match[1];
             if (!VRL_FUNCTION_NAMES.includes(funcName)) {
                 const diagnostic = new vscode.Diagnostic(
-                    new vscode.Range(lineNumber, match.index, lineNumber, match.index + funcName.length),
+                    new vscode.Range(
+                        lineNumber,
+                        match.index,
+                        lineNumber,
+                        match.index + funcName.length
+                    ),
                     `Unknown function '${funcName}'. Did you mean one of: ${this.getSimilarFunctions(funcName).join(', ')}?`,
                     vscode.DiagnosticSeverity.Error
                 );
@@ -158,7 +188,11 @@ export class VrlDiagnosticsProvider {
         }
     }
 
-    private checkBestPractices(line: string, lineNumber: number, diagnostics: vscode.Diagnostic[]): void {
+    private checkBestPractices(
+        line: string,
+        lineNumber: number,
+        diagnostics: vscode.Diagnostic[]
+    ): void {
         if (line.includes('del(.)')) {
             const startPos = line.indexOf('del(.)');
             const diagnostic = new vscode.Diagnostic(
@@ -194,34 +228,33 @@ export class VrlDiagnosticsProvider {
             diagnostic.code = 'regex-performance';
             diagnostics.push(diagnostic);
         }
-
     }
 
     private hasProperErrorHandling(line: string, funcName: string): boolean {
         const hasBang = new RegExp(`\\b${funcName}!\\s*\\(`).test(line);
         const hasNullCoalescing = line.includes('??');
         const hasExplicitErrorHandling = /\w+\s*,\s*\w+\s*=/.test(line);
-        
+
         return hasBang || hasNullCoalescing || hasExplicitErrorHandling;
     }
-    
+
     private getSimilarFunctions(input: string): string[] {
-        return VRL_FUNCTION_NAMES
-            .filter(name => this.levenshteinDistance(input.toLowerCase(), name.toLowerCase()) <= 3)
-            .slice(0, 3);
+        return VRL_FUNCTION_NAMES.filter(
+            (name) => this.levenshteinDistance(input.toLowerCase(), name.toLowerCase()) <= 3
+        ).slice(0, 3);
     }
-    
+
     private levenshteinDistance(str1: string, str2: string): number {
         const matrix = [];
-        
+
         for (let i = 0; i <= str2.length; i++) {
             matrix[i] = [i];
         }
-        
+
         for (let j = 0; j <= str1.length; j++) {
             matrix[0][j] = j;
         }
-        
+
         for (let i = 1; i <= str2.length; i++) {
             for (let j = 1; j <= str1.length; j++) {
                 if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
@@ -235,35 +268,46 @@ export class VrlDiagnosticsProvider {
                 }
             }
         }
-        
+
         return matrix[str2.length][str1.length];
     }
 
-    private checkDocumentSyntax(text: string, lines: string[], diagnostics: vscode.Diagnostic[]): void {
+    private checkDocumentSyntax(
+        text: string,
+        lines: string[],
+        diagnostics: vscode.Diagnostic[]
+    ): void {
         let braceCount = 0;
         let parenCount = 0;
         let bracketCount = 0;
-        
+
         let currentLine = 0;
         let currentChar = 0;
-        
+
         for (let i = 0; i < text.length; i++) {
             const char = text[i];
-            
+
             if (char === '\n') {
                 currentLine++;
                 currentChar = 0;
                 continue;
             }
             currentChar++;
-            
+
             switch (char) {
-                case '{': braceCount++; break;
-                case '}': 
-                    braceCount--; 
+                case '{':
+                    braceCount++;
+                    break;
+                case '}':
+                    braceCount--;
                     if (braceCount < 0) {
                         const diagnostic = new vscode.Diagnostic(
-                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            new vscode.Range(
+                                currentLine,
+                                currentChar - 1,
+                                currentLine,
+                                currentChar
+                            ),
                             'Unexpected closing brace - no matching opening brace',
                             vscode.DiagnosticSeverity.Error
                         );
@@ -272,12 +316,19 @@ export class VrlDiagnosticsProvider {
                         braceCount = 0;
                     }
                     break;
-                case '(': parenCount++; break;
-                case ')': 
-                    parenCount--; 
+                case '(':
+                    parenCount++;
+                    break;
+                case ')':
+                    parenCount--;
                     if (parenCount < 0) {
                         const diagnostic = new vscode.Diagnostic(
-                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            new vscode.Range(
+                                currentLine,
+                                currentChar - 1,
+                                currentLine,
+                                currentChar
+                            ),
                             'Unexpected closing parenthesis - no matching opening parenthesis',
                             vscode.DiagnosticSeverity.Error
                         );
@@ -286,12 +337,19 @@ export class VrlDiagnosticsProvider {
                         parenCount = 0;
                     }
                     break;
-                case '[': bracketCount++; break;
-                case ']': 
-                    bracketCount--; 
+                case '[':
+                    bracketCount++;
+                    break;
+                case ']':
+                    bracketCount--;
                     if (bracketCount < 0) {
                         const diagnostic = new vscode.Diagnostic(
-                            new vscode.Range(currentLine, currentChar - 1, currentLine, currentChar),
+                            new vscode.Range(
+                                currentLine,
+                                currentChar - 1,
+                                currentLine,
+                                currentChar
+                            ),
                             'Unexpected closing bracket - no matching opening bracket',
                             vscode.DiagnosticSeverity.Error
                         );
@@ -302,30 +360,45 @@ export class VrlDiagnosticsProvider {
                     break;
             }
         }
-        
+
         if (braceCount > 0) {
             const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                new vscode.Range(
+                    lines.length - 1,
+                    0,
+                    lines.length - 1,
+                    lines[lines.length - 1].length
+                ),
                 `Missing ${braceCount} closing brace${braceCount > 1 ? 's' : ''}`,
                 vscode.DiagnosticSeverity.Error
             );
             diagnostic.code = 'missing-closing-brace';
             diagnostics.push(diagnostic);
         }
-        
+
         if (parenCount > 0) {
             const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                new vscode.Range(
+                    lines.length - 1,
+                    0,
+                    lines.length - 1,
+                    lines[lines.length - 1].length
+                ),
                 `Missing ${parenCount} closing parenthesis${parenCount > 1 ? 'es' : ''}`,
                 vscode.DiagnosticSeverity.Error
             );
             diagnostic.code = 'missing-closing-paren';
             diagnostics.push(diagnostic);
         }
-        
+
         if (bracketCount > 0) {
             const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(lines.length - 1, 0, lines.length - 1, lines[lines.length - 1].length),
+                new vscode.Range(
+                    lines.length - 1,
+                    0,
+                    lines.length - 1,
+                    lines[lines.length - 1].length
+                ),
                 `Missing ${bracketCount} closing bracket${bracketCount > 1 ? 's' : ''}`,
                 vscode.DiagnosticSeverity.Error
             );
@@ -338,7 +411,7 @@ export class VrlDiagnosticsProvider {
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             const prevLine = i > 0 ? lines[i - 1].trim() : '';
-            
+
             if (line.startsWith('else ') || line.startsWith('else if ') || line === 'else') {
                 if (prevLine.endsWith('}')) {
                     const diagnostic = new vscode.Diagnostic(

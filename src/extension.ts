@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('VRL extension is being activated');
 
     client = new VrlLanguageClient(context);
-    
+
     const commandProvider = new VrlCommandProvider();
     const diagnosticsProvider = new VrlDiagnosticsProvider();
     const completionProvider = new VrlCompletionProvider();
@@ -21,15 +21,41 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.languages.registerCompletionItemProvider(
             { scheme: 'file', language: 'vrl' },
             completionProvider,
-            '.', '(', '!', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+            '.',
+            '(',
+            '!',
+            ' ',
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z'
         )
     );
 
     context.subscriptions.push(
-        vscode.languages.registerHoverProvider(
-            { scheme: 'file', language: 'vrl' },
-            hoverProvider
-        )
+        vscode.languages.registerHoverProvider({ scheme: 'file', language: 'vrl' }, hoverProvider)
     );
 
     context.subscriptions.push(
@@ -58,7 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     client.start();
 
-    vscode.workspace.textDocuments.forEach(document => {
+    vscode.workspace.textDocuments.forEach((document) => {
         if (document.languageId === 'vrl') {
             diagnosticsProvider.validateDocument(document);
         }

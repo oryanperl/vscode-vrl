@@ -22,971 +22,969 @@ export interface VrlFunction {
 
 export const VRL_FUNCTIONS: { [key: string]: VrlFunction } = {
     // Array Functions
-    'append': {
+    append: {
         name: 'append',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'items', type: 'array' }
+            { name: 'items', type: 'array' },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Appends items from one array to another',
         category: 'array',
-        example: 'append([1, 2], [3, 4]) // [1, 2, 3, 4]'
+        example: 'append([1, 2], [3, 4]) // [1, 2, 3, 4]',
     },
-    'chunks': {
+    chunks: {
         name: 'chunks',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'chunk_size', type: 'int' }
+            { name: 'chunk_size', type: 'int' },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Splits an array into chunks of specified size',
         category: 'array',
-        example: 'chunks([1, 2, 3, 4], 2) // [[1, 2], [3, 4]]'
+        example: 'chunks([1, 2, 3, 4], 2) // [[1, 2], [3, 4]]',
     },
-    'compact': {
+    compact: {
         name: 'compact',
         parameters: [{ name: 'value', type: 'array' }],
         returnType: 'array',
         fallible: false,
         description: 'Removes null values from an array',
         category: 'array',
-        example: 'compact([1, null, 2, null, 3]) // [1, 2, 3]'
+        example: 'compact([1, null, 2, null, 3]) // [1, 2, 3]',
     },
-    'filter': {
+    filter: {
         name: 'filter',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'condition', type: 'closure' }
+            { name: 'condition', type: 'closure' },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Filters array elements based on a condition',
         category: 'array',
-        example: 'filter([1, 2, 3, 4], { |item| item > 2 }) // [3, 4]'
+        example: 'filter([1, 2, 3, 4], { |item| item > 2 }) // [3, 4]',
     },
-    'flatten': {
+    flatten: {
         name: 'flatten',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'depth', type: 'int', optional: true }
+            { name: 'depth', type: 'int', optional: true },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Flattens nested arrays to specified depth',
         category: 'array',
-        example: 'flatten([[1, 2], [3, [4, 5]]]) // [1, 2, 3, [4, 5]]'
+        example: 'flatten([[1, 2], [3, [4, 5]]]) // [1, 2, 3, [4, 5]]',
     },
-    'join': {
+    join: {
         name: 'join',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'separator', type: 'string' }
+            { name: 'separator', type: 'string' },
         ],
         returnType: 'string',
         fallible: true,
         description: 'Joins array elements into a string with separator',
         category: 'array',
-        example: 'join!([1, 2, 3], ",") // "1,2,3"'
+        example: 'join!([1, 2, 3], ",") // "1,2,3"',
     },
-    'length': {
+    length: {
         name: 'length',
         parameters: [{ name: 'value', type: 'array|object|string' }],
         returnType: 'int',
         fallible: false,
         description: 'Returns the length of an array, object, or string',
         category: 'array',
-        example: 'length([1, 2, 3]) // 3'
+        example: 'length([1, 2, 3]) // 3',
     },
-    'push': {
+    push: {
         name: 'push',
         parameters: [
             { name: 'value', type: 'array' },
-            { name: 'item', type: 'any' }
+            { name: 'item', type: 'any' },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Adds an item to the end of an array',
         category: 'array',
-        example: 'push([1, 2], 3) // [1, 2, 3]'
+        example: 'push([1, 2], 3) // [1, 2, 3]',
     },
-    'reverse': {
+    reverse: {
         name: 'reverse',
         parameters: [{ name: 'value', type: 'array' }],
         returnType: 'array',
         fallible: false,
         description: 'Reverses the order of array elements',
         category: 'array',
-        example: 'reverse([1, 2, 3]) // [3, 2, 1]'
+        example: 'reverse([1, 2, 3]) // [3, 2, 1]',
     },
-    'slice': {
+    slice: {
         name: 'slice',
         parameters: [
             { name: 'value', type: 'array' },
             { name: 'start', type: 'int' },
-            { name: 'end', type: 'int', optional: true }
+            { name: 'end', type: 'int', optional: true },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Extracts a portion of an array',
         category: 'array',
-        example: 'slice([1, 2, 3, 4], 1, 3) // [2, 3]'
+        example: 'slice([1, 2, 3, 4], 1, 3) // [2, 3]',
     },
-    'sort': {
+    sort: {
         name: 'sort',
         parameters: [{ name: 'value', type: 'array' }],
         returnType: 'array',
         fallible: false,
         description: 'Sorts array elements',
         category: 'array',
-        example: 'sort([3, 1, 2]) // [1, 2, 3]'
+        example: 'sort([3, 1, 2]) // [1, 2, 3]',
     },
-    'unique': {
+    unique: {
         name: 'unique',
         parameters: [{ name: 'value', type: 'array' }],
         returnType: 'array',
         fallible: false,
         description: 'Returns unique elements from an array',
         category: 'array',
-        example: 'unique([1, 2, 2, 3]) // [1, 2, 3]'
+        example: 'unique([1, 2, 2, 3]) // [1, 2, 3]',
     },
 
     // Codec Functions (Encoding/Decoding)
-    'decode_base16': {
+    decode_base16: {
         name: 'decode_base16',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: true,
         description: 'Decodes a base16 encoded string',
         category: 'codec',
-        example: 'decode_base16!("48656C6C6F") // "Hello"'
+        example: 'decode_base16!("48656C6C6F") // "Hello"',
     },
-    'decode_base64': {
+    decode_base64: {
         name: 'decode_base64',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: true,
         description: 'Decodes a base64 encoded string',
         category: 'codec',
-        example: 'decode_base64!("SGVsbG8=") // "Hello"'
+        example: 'decode_base64!("SGVsbG8=") // "Hello"',
     },
-    'decode_gzip': {
+    decode_gzip: {
         name: 'decode_gzip',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: true,
         description: 'Decompresses a gzip compressed string',
         category: 'codec',
-        example: 'decode_gzip!(.compressed_data)'
+        example: 'decode_gzip!(.compressed_data)',
     },
-    'decode_percent': {
+    decode_percent: {
         name: 'decode_percent',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: true,
         description: 'Decodes a percent-encoded (URL-encoded) string',
         category: 'codec',
-        example: 'decode_percent!("Hello%20World") // "Hello World"'
+        example: 'decode_percent!("Hello%20World") // "Hello World"',
     },
-    'encode_base16': {
+    encode_base16: {
         name: 'encode_base16',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Encodes a string as base16',
         category: 'codec',
-        example: 'encode_base16("Hello") // "48656C6C6F"'
+        example: 'encode_base16("Hello") // "48656C6C6F"',
     },
-    'encode_base64': {
+    encode_base64: {
         name: 'encode_base64',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Encodes a string as base64',
         category: 'codec',
-        example: 'encode_base64("Hello") // "SGVsbG8="'
+        example: 'encode_base64("Hello") // "SGVsbG8="',
     },
-    'encode_gzip': {
+    encode_gzip: {
         name: 'encode_gzip',
         parameters: [
             { name: 'value', type: 'string' },
-            { name: 'level', type: 'int', optional: true }
+            { name: 'level', type: 'int', optional: true },
         ],
         returnType: 'string',
         fallible: true,
         description: 'Compresses a string using gzip',
         category: 'codec',
-        example: 'encode_gzip!("Hello World")'
+        example: 'encode_gzip!("Hello World")',
     },
-    'encode_percent': {
+    encode_percent: {
         name: 'encode_percent',
         parameters: [
             { name: 'value', type: 'string' },
-            { name: 'ascii_only', type: 'bool', optional: true }
+            { name: 'ascii_only', type: 'bool', optional: true },
         ],
         returnType: 'string',
         fallible: false,
         description: 'Encodes a string with percent encoding (URL encoding)',
         category: 'codec',
-        example: 'encode_percent("Hello World") // "Hello%20World"'
+        example: 'encode_percent("Hello World") // "Hello%20World"',
     },
 
     // Coerce/Type Conversion Functions
-    'to_bool': {
+    to_bool: {
         name: 'to_bool',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: true,
         description: 'Converts a value to boolean',
         category: 'coerce',
-        example: 'to_bool!("true") // true'
+        example: 'to_bool!("true") // true',
     },
-    'to_float': {
+    to_float: {
         name: 'to_float',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'float',
         fallible: true,
         description: 'Converts a value to float',
         category: 'coerce',
-        example: 'to_float!("3.14") // 3.14'
+        example: 'to_float!("3.14") // 3.14',
     },
-    'to_int': {
+    to_int: {
         name: 'to_int',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'int',
         fallible: true,
         description: 'Converts a value to integer',
         category: 'coerce',
-        example: 'to_int!("42") // 42'
+        example: 'to_int!("42") // 42',
     },
-    'to_regex': {
+    to_regex: {
         name: 'to_regex',
         parameters: [{ name: 'value', type: 'string' }],
         returnType: 'regex',
         fallible: true,
         description: 'Converts a string to a regex pattern',
         category: 'coerce',
-        example: 'to_regex!("a+b") // regex pattern'
+        example: 'to_regex!("a+b") // regex pattern',
     },
-    'to_string': {
+    to_string: {
         name: 'to_string',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'string',
         fallible: false,
         description: 'Converts a value to string',
         category: 'coerce',
-        example: 'to_string(42) // "42"'
+        example: 'to_string(42) // "42"',
     },
-    'to_timestamp': {
+    to_timestamp: {
         name: 'to_timestamp',
         parameters: [
             { name: 'value', type: 'any' },
-            { name: 'format', type: 'string', optional: true }
+            { name: 'format', type: 'string', optional: true },
         ],
         returnType: 'timestamp',
         fallible: true,
         description: 'Converts a value to timestamp',
         category: 'coerce',
-        example: 'to_timestamp!("2023-01-01T00:00:00Z")'
+        example: 'to_timestamp!("2023-01-01T00:00:00Z")',
     },
 
     // String Functions
-    'contains': {
+    contains: {
         name: 'contains',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'substring', type: 'string' }
+            { name: 'substring', type: 'string' },
         ],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if text contains substring',
         category: 'string',
-        example: 'contains("hello world", "world") // true'
+        example: 'contains("hello world", "world") // true',
     },
-    'downcase': {
+    downcase: {
         name: 'downcase',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Converts text to lowercase',
         category: 'string',
-        example: 'downcase("HELLO") // "hello"'
+        example: 'downcase("HELLO") // "hello"',
     },
-    'ends_with': {
+    ends_with: {
         name: 'ends_with',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'suffix', type: 'string' }
+            { name: 'suffix', type: 'string' },
         ],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if text ends with suffix',
         category: 'string',
-        example: 'ends_with("hello.txt", ".txt") // true'
+        example: 'ends_with("hello.txt", ".txt") // true',
     },
-    'match': {
+    match: {
         name: 'match',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'pattern', type: 'regex' }
+            { name: 'pattern', type: 'regex' },
         ],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if text matches regex pattern',
         category: 'string',
-        example: 'match("abc123", r"\\d+") // true'
+        example: 'match("abc123", r"\\d+") // true',
     },
-    'replace': {
+    replace: {
         name: 'replace',
         parameters: [
             { name: 'text', type: 'string' },
             { name: 'pattern', type: 'string|regex' },
-            { name: 'replacement', type: 'string' }
+            { name: 'replacement', type: 'string' },
         ],
         returnType: 'string',
         fallible: false,
         description: 'Replaces pattern matches in text',
         category: 'string',
-        example: 'replace("hello world", "world", "VRL") // "hello VRL"'
+        example: 'replace("hello world", "world", "VRL") // "hello VRL"',
     },
-    'split': {
+    split: {
         name: 'split',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'delimiter', type: 'string' }
+            { name: 'delimiter', type: 'string' },
         ],
         returnType: 'array',
         fallible: false,
         description: 'Splits text by delimiter',
         category: 'string',
-        example: 'split("a,b,c", ",") // ["a", "b", "c"]'
+        example: 'split("a,b,c", ",") // ["a", "b", "c"]',
     },
-    'starts_with': {
+    starts_with: {
         name: 'starts_with',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'prefix', type: 'string' }
+            { name: 'prefix', type: 'string' },
         ],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if text starts with prefix',
         category: 'string',
-        example: 'starts_with("hello.txt", "hello") // true'
+        example: 'starts_with("hello.txt", "hello") // true',
     },
-    'strip_ansi_escape_codes': {
+    strip_ansi_escape_codes: {
         name: 'strip_ansi_escape_codes',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Removes ANSI escape codes from text',
         category: 'string',
-        example: 'strip_ansi_escape_codes("\\x1b[31mred\\x1b[0m") // "red"'
+        example: 'strip_ansi_escape_codes("\\x1b[31mred\\x1b[0m") // "red"',
     },
-    'strip_whitespace': {
+    strip_whitespace: {
         name: 'strip_whitespace',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Removes leading and trailing whitespace',
         category: 'string',
-        example: 'strip_whitespace("  hello  ") // "hello"'
+        example: 'strip_whitespace("  hello  ") // "hello"',
     },
-    'strlen': {
+    strlen: {
         name: 'strlen',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'int',
         fallible: false,
         description: 'Returns the character length of a string',
         category: 'string',
-        example: 'strlen("hello") // 5'
+        example: 'strlen("hello") // 5',
     },
-    'upcase': {
+    upcase: {
         name: 'upcase',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Converts text to uppercase',
         category: 'string',
-        example: 'upcase("hello") // "HELLO"'
+        example: 'upcase("hello") // "HELLO"',
     },
 
     // Parsing Functions (MOSTLY FALLIBLE)
-    'parse_apache_log': {
+    parse_apache_log: {
         name: 'parse_apache_log',
         parameters: [
             { name: 'message', type: 'string' },
-            { name: 'format', type: 'string', optional: true }
+            { name: 'format', type: 'string', optional: true },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses Apache access logs',
         category: 'parse',
-        example: 'parse_apache_log!(.message)'
+        example: 'parse_apache_log!(.message)',
     },
-    'parse_cef': {
+    parse_cef: {
         name: 'parse_cef',
         parameters: [
             { name: 'message', type: 'string' },
-            { name: 'transform_fields', type: 'bool', optional: true }
+            { name: 'transform_fields', type: 'bool', optional: true },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses Common Event Format (CEF) messages',
         category: 'parse',
-        example: 'parse_cef!(.message)'
+        example: 'parse_cef!(.message)',
     },
-    'parse_common_log': {
+    parse_common_log: {
         name: 'parse_common_log',
         parameters: [{ name: 'message', type: 'string' }],
         returnType: 'object',
         fallible: true,
         description: 'Parses Common Log Format messages',
         category: 'parse',
-        example: 'parse_common_log!(.message)'
+        example: 'parse_common_log!(.message)',
     },
-    'parse_csv': {
+    parse_csv: {
         name: 'parse_csv',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'delimiter', type: 'string', optional: true }
+            { name: 'delimiter', type: 'string', optional: true },
         ],
         returnType: 'array',
         fallible: true,
         description: 'Parses CSV formatted text',
         category: 'parse',
-        example: 'parse_csv!(.text, ",")'
+        example: 'parse_csv!(.text, ",")',
     },
-    'parse_grok': {
+    parse_grok: {
         name: 'parse_grok',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'pattern', type: 'string' }
+            { name: 'pattern', type: 'string' },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses text using Grok patterns',
         category: 'parse',
-        example: 'parse_grok!(.message, "%{COMMONAPACHELOG}")'
+        example: 'parse_grok!(.message, "%{COMMONAPACHELOG}")',
     },
-    'parse_groks': {
+    parse_groks: {
         name: 'parse_groks',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'patterns', type: 'array' }
+            { name: 'patterns', type: 'array' },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses text using multiple Grok patterns',
         category: 'parse',
-        example: 'parse_groks!(.message, ["%{COMMONAPACHELOG}", "%{COMBINEDAPACHELOG}"])'
+        example: 'parse_groks!(.message, ["%{COMMONAPACHELOG}", "%{COMBINEDAPACHELOG}"])',
     },
-    'parse_json': {
+    parse_json: {
         name: 'parse_json',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'any',
         fallible: true,
         description: 'Parses JSON formatted text',
         category: 'parse',
-        example: 'parse_json!(.message)'
+        example: 'parse_json!(.message)',
     },
-    'parse_key_value': {
+    parse_key_value: {
         name: 'parse_key_value',
         parameters: [
             { name: 'text', type: 'string' },
             { name: 'separator', type: 'string', optional: true },
-            { name: 'delimiter', type: 'string', optional: true }
+            { name: 'delimiter', type: 'string', optional: true },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses key-value pairs from text',
         category: 'parse',
-        example: 'parse_key_value!(.message, "=", " ")'
+        example: 'parse_key_value!(.message, "=", " ")',
     },
-    'parse_nginx_log': {
+    parse_nginx_log: {
         name: 'parse_nginx_log',
         parameters: [
             { name: 'message', type: 'string' },
-            { name: 'format', type: 'string', optional: true }
+            { name: 'format', type: 'string', optional: true },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses Nginx access logs',
         category: 'parse',
-        example: 'parse_nginx_log!(.message)'
+        example: 'parse_nginx_log!(.message)',
     },
-    'parse_regex': {
+    parse_regex: {
         name: 'parse_regex',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'pattern', type: 'regex' }
+            { name: 'pattern', type: 'regex' },
         ],
         returnType: 'object',
         fallible: true,
         description: 'Parses text using regex with named capture groups',
         category: 'parse',
-        example: 'parse_regex!(.message, r"(?P<level>\\w+): (?P<msg>.*)")'
+        example: 'parse_regex!(.message, r"(?P<level>\\w+): (?P<msg>.*)")',
     },
-    'parse_syslog': {
+    parse_syslog: {
         name: 'parse_syslog',
         parameters: [{ name: 'message', type: 'string' }],
         returnType: 'object',
         fallible: true,
         description: 'Parses syslog formatted messages',
         category: 'parse',
-        example: 'parse_syslog!(.message)'
+        example: 'parse_syslog!(.message)',
     },
-    'parse_timestamp': {
+    parse_timestamp: {
         name: 'parse_timestamp',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'format', type: 'string' }
+            { name: 'format', type: 'string' },
         ],
         returnType: 'timestamp',
         fallible: true,
         description: 'Parses timestamp from text using format string',
         category: 'parse',
-        example: 'parse_timestamp!(.date, "%Y-%m-%d %H:%M:%S")'
+        example: 'parse_timestamp!(.date, "%Y-%m-%d %H:%M:%S")',
     },
-    'parse_url': {
+    parse_url: {
         name: 'parse_url',
         parameters: [{ name: 'url', type: 'string' }],
         returnType: 'object',
         fallible: true,
         description: 'Parses URL into components',
         category: 'parse',
-        example: 'parse_url!("https://example.com/path?query=value")'
+        example: 'parse_url!("https://example.com/path?query=value")',
     },
-    'parse_user_agent': {
+    parse_user_agent: {
         name: 'parse_user_agent',
         parameters: [{ name: 'user_agent', type: 'string' }],
         returnType: 'object',
         fallible: true,
         description: 'Parses User-Agent string into components',
         category: 'parse',
-        example: 'parse_user_agent!(.user_agent)'
+        example: 'parse_user_agent!(.user_agent)',
     },
 
     // Cryptographic/Hash Functions
-    'decrypt': {
+    decrypt: {
         name: 'decrypt',
         parameters: [
             { name: 'ciphertext', type: 'string' },
             { name: 'algorithm', type: 'string' },
             { name: 'key', type: 'string' },
-            { name: 'iv', type: 'string', optional: true }
+            { name: 'iv', type: 'string', optional: true },
         ],
         returnType: 'string',
         fallible: true,
         description: 'Decrypts ciphertext using specified algorithm',
         category: 'crypto',
-        example: 'decrypt!(.ciphertext, "AES-256-GCM", .key, .iv)'
+        example: 'decrypt!(.ciphertext, "AES-256-GCM", .key, .iv)',
     },
-    'hmac': {
+    hmac: {
         name: 'hmac',
         parameters: [
             { name: 'message', type: 'string' },
             { name: 'key', type: 'string' },
-            { name: 'algorithm', type: 'string', optional: true }
+            { name: 'algorithm', type: 'string', optional: true },
         ],
         returnType: 'string',
         fallible: false,
         description: 'Generates HMAC hash',
         category: 'crypto',
-        example: 'hmac("message", "secret", "sha256")'
+        example: 'hmac("message", "secret", "sha256")',
     },
-    'md5': {
+    md5: {
         name: 'md5',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Generates MD5 hash',
         category: 'crypto',
-        example: 'md5("hello") // "5d41402abc4b2a76b9719d911017c592"'
+        example: 'md5("hello") // "5d41402abc4b2a76b9719d911017c592"',
     },
-    'sha1': {
+    sha1: {
         name: 'sha1',
         parameters: [{ name: 'text', type: 'string' }],
         returnType: 'string',
         fallible: false,
         description: 'Generates SHA1 hash',
         category: 'crypto',
-        example: 'sha1("hello")'
+        example: 'sha1("hello")',
     },
-    'sha2': {
+    sha2: {
         name: 'sha2',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'variant', type: 'int', optional: true }
+            { name: 'variant', type: 'int', optional: true },
         ],
         returnType: 'string',
         fallible: false,
         description: 'Generates SHA2 hash (SHA-256 by default)',
         category: 'crypto',
-        example: 'sha2("hello", 256)'
+        example: 'sha2("hello", 256)',
     },
-    'sha3': {
+    sha3: {
         name: 'sha3',
         parameters: [
             { name: 'text', type: 'string' },
-            { name: 'variant', type: 'int', optional: true }
+            { name: 'variant', type: 'int', optional: true },
         ],
         returnType: 'string',
         fallible: false,
         description: 'Generates SHA3 hash',
         category: 'crypto',
-        example: 'sha3("hello", 256)'
+        example: 'sha3("hello", 256)',
     },
 
     // Date/Time Functions
-    'format_timestamp': {
+    format_timestamp: {
         name: 'format_timestamp',
         parameters: [
             { name: 'timestamp', type: 'timestamp' },
-            { name: 'format', type: 'string' }
+            { name: 'format', type: 'string' },
         ],
         returnType: 'string',
         fallible: true,
         description: 'Formats timestamp as string',
         category: 'datetime',
-        example: 'format_timestamp!(.timestamp, "%Y-%m-%d %H:%M:%S")'
+        example: 'format_timestamp!(.timestamp, "%Y-%m-%d %H:%M:%S")',
     },
-    'from_unix_timestamp': {
+    from_unix_timestamp: {
         name: 'from_unix_timestamp',
         parameters: [
             { name: 'unix_timestamp', type: 'int' },
-            { name: 'unit', type: 'string', optional: true }
+            { name: 'unit', type: 'string', optional: true },
         ],
         returnType: 'timestamp',
         fallible: false,
         description: 'Converts Unix timestamp to timestamp',
         category: 'datetime',
-        example: 'from_unix_timestamp(1640995200, "seconds")'
+        example: 'from_unix_timestamp(1640995200, "seconds")',
     },
-    'now': {
+    now: {
         name: 'now',
         parameters: [],
         returnType: 'timestamp',
         fallible: false,
         description: 'Returns current timestamp',
         category: 'datetime',
-        example: 'now()'
+        example: 'now()',
     },
-    'to_unix_timestamp': {
+    to_unix_timestamp: {
         name: 'to_unix_timestamp',
         parameters: [
             { name: 'timestamp', type: 'timestamp' },
-            { name: 'unit', type: 'string', optional: true }
+            { name: 'unit', type: 'string', optional: true },
         ],
         returnType: 'int',
         fallible: false,
         description: 'Converts timestamp to Unix timestamp',
         category: 'datetime',
-        example: 'to_unix_timestamp(.timestamp, "seconds")'
+        example: 'to_unix_timestamp(.timestamp, "seconds")',
     },
 
     // Object/Path Functions
-    'del': {
+    del: {
         name: 'del',
         parameters: [{ name: 'path', type: 'path' }],
         returnType: 'null',
         fallible: false,
         description: 'Deletes a field from the event',
         category: 'object',
-        example: 'del(.field_to_remove)'
+        example: 'del(.field_to_remove)',
     },
-    'exists': {
+    exists: {
         name: 'exists',
         parameters: [{ name: 'path', type: 'path' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if a field exists',
         category: 'object',
-        example: 'exists(.optional_field)'
+        example: 'exists(.optional_field)',
     },
-    'get': {
+    get: {
         name: 'get',
         parameters: [
             { name: 'object', type: 'object' },
             { name: 'path', type: 'path' },
-            { name: 'default', type: 'any', optional: true }
+            { name: 'default', type: 'any', optional: true },
         ],
         returnType: 'any',
         fallible: false,
         description: 'Gets value from object at path with optional default',
         category: 'object',
-        example: 'get(.data, ["nested", "field"], "default")'
+        example: 'get(.data, ["nested", "field"], "default")',
     },
-    'has': {
+    has: {
         name: 'has',
         parameters: [
             { name: 'object', type: 'object' },
-            { name: 'field', type: 'string' }
+            { name: 'field', type: 'string' },
         ],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if object has field',
         category: 'object',
-        example: 'has(.metadata, "version")'
+        example: 'has(.metadata, "version")',
     },
-    'keys': {
+    keys: {
         name: 'keys',
         parameters: [{ name: 'object', type: 'object' }],
         returnType: 'array',
         fallible: false,
         description: 'Returns array of object keys',
         category: 'object',
-        example: 'keys(.metadata) // ["key1", "key2"]'
+        example: 'keys(.metadata) // ["key1", "key2"]',
     },
-    'merge': {
+    merge: {
         name: 'merge',
         parameters: [
             { name: 'object1', type: 'object' },
             { name: 'object2', type: 'object' },
-            { name: 'deep', type: 'bool', optional: true }
+            { name: 'deep', type: 'bool', optional: true },
         ],
         returnType: 'object',
         fallible: false,
         description: 'Merges two objects',
         category: 'object',
-        example: 'merge(.obj1, .obj2, true)'
+        example: 'merge(.obj1, .obj2, true)',
     },
-    'remove': {
+    remove: {
         name: 'remove',
         parameters: [
             { name: 'object', type: 'object' },
             { name: 'path', type: 'path' },
-            { name: 'compact', type: 'bool', optional: true }
+            { name: 'compact', type: 'bool', optional: true },
         ],
         returnType: 'any',
         fallible: false,
         description: 'Removes field from object and returns its value',
         category: 'object',
-        example: 'remove(.metadata, .field)'
+        example: 'remove(.metadata, .field)',
     },
-    'set': {
+    set: {
         name: 'set',
         parameters: [
             { name: 'object', type: 'object' },
             { name: 'path', type: 'path' },
-            { name: 'value', type: 'any' }
+            { name: 'value', type: 'any' },
         ],
         returnType: 'any',
         fallible: false,
         description: 'Sets value in object at path',
         category: 'object',
-        example: 'set(.metadata, "version", "1.0")'
+        example: 'set(.metadata, "version", "1.0")',
     },
-    'values': {
+    values: {
         name: 'values',
         parameters: [{ name: 'object', type: 'object' }],
         returnType: 'array',
         fallible: false,
         description: 'Returns array of object values',
         category: 'object',
-        example: 'values(.metadata) // ["value1", "value2"]'
+        example: 'values(.metadata) // ["value1", "value2"]',
     },
 
     // Type Checking Functions
-    'is_array': {
+    is_array: {
         name: 'is_array',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is an array',
         category: 'type',
-        example: 'is_array([1, 2, 3]) // true'
+        example: 'is_array([1, 2, 3]) // true',
     },
-    'is_bool': {
+    is_bool: {
         name: 'is_bool',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is a boolean',
         category: 'type',
-        example: 'is_bool(true) // true'
+        example: 'is_bool(true) // true',
     },
-    'is_float': {
+    is_float: {
         name: 'is_float',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is a float',
         category: 'type',
-        example: 'is_float(3.14) // true'
+        example: 'is_float(3.14) // true',
     },
-    'is_int': {
+    is_int: {
         name: 'is_int',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is an integer',
         category: 'type',
-        example: 'is_int(42) // true'
+        example: 'is_int(42) // true',
     },
-    'is_null': {
+    is_null: {
         name: 'is_null',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is null',
         category: 'type',
-        example: 'is_null(null) // true'
+        example: 'is_null(null) // true',
     },
-    'is_object': {
+    is_object: {
         name: 'is_object',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is an object',
         category: 'type',
-        example: 'is_object({"key": "value"}) // true'
+        example: 'is_object({"key": "value"}) // true',
     },
-    'is_string': {
+    is_string: {
         name: 'is_string',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is a string',
         category: 'type',
-        example: 'is_string("hello") // true'
+        example: 'is_string("hello") // true',
     },
-    'is_timestamp': {
+    is_timestamp: {
         name: 'is_timestamp',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'bool',
         fallible: false,
         description: 'Checks if value is a timestamp',
         category: 'type',
-        example: 'is_timestamp(now()) // true'
+        example: 'is_timestamp(now()) // true',
     },
 
     // Utility Functions
-    'assert': {
+    assert: {
         name: 'assert',
         parameters: [
             { name: 'condition', type: 'bool' },
-            { name: 'message', type: 'string', optional: true }
+            { name: 'message', type: 'string', optional: true },
         ],
         returnType: 'null',
         fallible: true,
         description: 'Asserts that condition is true, aborts if false',
         category: 'utility',
-        example: 'assert!(exists(.required_field), "Missing required field")'
+        example: 'assert!(exists(.required_field), "Missing required field")',
     },
-    'assert_eq': {
+    assert_eq: {
         name: 'assert_eq',
         parameters: [
             { name: 'left', type: 'any' },
             { name: 'right', type: 'any' },
-            { name: 'message', type: 'string', optional: true }
+            { name: 'message', type: 'string', optional: true },
         ],
         returnType: 'null',
         fallible: true,
         description: 'Asserts that two values are equal',
         category: 'utility',
-        example: 'assert_eq!(.status, 200, "Expected 200 status")'
+        example: 'assert_eq!(.status, 200, "Expected 200 status")',
     },
-    'log': {
+    log: {
         name: 'log',
         parameters: [
             { name: 'message', type: 'string' },
-            { name: 'level', type: 'string', optional: true }
+            { name: 'level', type: 'string', optional: true },
         ],
         returnType: 'null',
         fallible: false,
         description: 'Logs a message at specified level',
         category: 'utility',
-        example: 'log("Processing event", level: "debug")'
+        example: 'log("Processing event", level: "debug")',
     },
-    'type': {
+    type: {
         name: 'type',
         parameters: [{ name: 'value', type: 'any' }],
         returnType: 'string',
         fallible: false,
         description: 'Returns the type name of a value',
         category: 'utility',
-        example: 'type("hello") // "string"'
+        example: 'type("hello") // "string"',
     },
-    'uuid_v4': {
+    uuid_v4: {
         name: 'uuid_v4',
         parameters: [],
         returnType: 'string',
         fallible: false,
         description: 'Generates a random UUID v4',
         category: 'utility',
-        example: 'uuid_v4() // "550e8400-e29b-41d4-a716-446655440000"'
+        example: 'uuid_v4() // "550e8400-e29b-41d4-a716-446655440000"',
     },
 
     // Math Functions
-    'abs': {
+    abs: {
         name: 'abs',
         parameters: [{ name: 'value', type: 'int|float' }],
         returnType: 'int|float',
         fallible: false,
         description: 'Returns absolute value',
         category: 'math',
-        example: 'abs(-5) // 5'
+        example: 'abs(-5) // 5',
     },
-    'ceil': {
+    ceil: {
         name: 'ceil',
         parameters: [{ name: 'value', type: 'float' }],
         returnType: 'int',
         fallible: false,
         description: 'Rounds up to nearest integer',
         category: 'math',
-        example: 'ceil(3.2) // 4'
+        example: 'ceil(3.2) // 4',
     },
-    'floor': {
+    floor: {
         name: 'floor',
         parameters: [{ name: 'value', type: 'float' }],
         returnType: 'int',
         fallible: false,
         description: 'Rounds down to nearest integer',
         category: 'math',
-        example: 'floor(3.8) // 3'
+        example: 'floor(3.8) // 3',
     },
-    'max': {
+    max: {
         name: 'max',
         parameters: [{ name: 'array', type: 'array' }],
         returnType: 'int|float',
         fallible: true,
         description: 'Returns maximum value from array',
         category: 'math',
-        example: 'max!([1, 2, 3]) // 3'
+        example: 'max!([1, 2, 3]) // 3',
     },
-    'min': {
+    min: {
         name: 'min',
         parameters: [{ name: 'array', type: 'array' }],
         returnType: 'int|float',
         fallible: true,
         description: 'Returns minimum value from array',
         category: 'math',
-        example: 'min!([1, 2, 3]) // 1'
+        example: 'min!([1, 2, 3]) // 1',
     },
-    'round': {
+    round: {
         name: 'round',
         parameters: [
             { name: 'value', type: 'float' },
-            { name: 'precision', type: 'int', optional: true }
+            { name: 'precision', type: 'int', optional: true },
         ],
         returnType: 'float',
         fallible: false,
         description: 'Rounds to specified precision',
         category: 'math',
-        example: 'round(3.14159, 2) // 3.14'
-    }
+        example: 'round(3.14159, 2) // 3.14',
+    },
 };
 
 export const VRL_FUNCTION_NAMES = Object.keys(VRL_FUNCTIONS);
 
-export const FALLIBLE_FUNCTIONS = VRL_FUNCTION_NAMES.filter(
-    name => VRL_FUNCTIONS[name].fallible
-);
+export const FALLIBLE_FUNCTIONS = VRL_FUNCTION_NAMES.filter((name) => VRL_FUNCTIONS[name].fallible);
 
 export const INFALLIBLE_FUNCTIONS = VRL_FUNCTION_NAMES.filter(
-    name => !VRL_FUNCTIONS[name].fallible
+    (name) => !VRL_FUNCTIONS[name].fallible
 );
 
 export function getFunctionByName(name: string): VrlFunction | undefined {
@@ -994,5 +992,5 @@ export function getFunctionByName(name: string): VrlFunction | undefined {
 }
 
 export function getFunctionsByCategory(category: string): VrlFunction[] {
-    return Object.values(VRL_FUNCTIONS).filter(func => func.category === category);
+    return Object.values(VRL_FUNCTIONS).filter((func) => func.category === category);
 }

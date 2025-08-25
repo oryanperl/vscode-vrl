@@ -31,51 +31,64 @@ result, err = to_int(.value)
         // Create a temporary document
         const doc = await vscode.workspace.openTextDocument({
             content: testContent,
-            language: 'vrl'
+            language: 'vrl',
         });
 
         // Clear diagnostics for this specific document
         const diagnosticsCollection = vscode.languages.createDiagnosticCollection('test-vrl');
         diagnosticsCollection.clear();
-        
+
         // Use our own diagnostics collection to avoid conflicts
         (diagnosticsProvider as any).diagnosticCollection = diagnosticsCollection;
-        
+
         // Validate the document
         diagnosticsProvider.validateDocument(doc);
 
         // Wait a bit for diagnostics to be processed
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         // Get diagnostics from our test collection
         const allDiagnostics = diagnosticsCollection.get(doc.uri) || [];
-        
+
         // Filter for only ERROR severity diagnostics about fallible functions
-        const errorDiagnostics = allDiagnostics.filter(diag => 
-            diag.severity === vscode.DiagnosticSeverity.Error && 
-            diag.message.includes('error handling')
+        const errorDiagnostics = allDiagnostics.filter(
+            (diag) =>
+                diag.severity === vscode.DiagnosticSeverity.Error &&
+                diag.message.includes('error handling')
         );
 
-        console.log(`Found ${allDiagnostics.length} total diagnostics, ${errorDiagnostics.length} error diagnostics:`);
+        console.log(
+            `Found ${allDiagnostics.length} total diagnostics, ${errorDiagnostics.length} error diagnostics:`
+        );
         errorDiagnostics.forEach((diag, index) => {
             console.log(`  ${index + 1}. Line ${diag.range.start.line}: ${diag.message}`);
         });
 
         // We expect exactly 4 errors for the 4 fallible functions used incorrectly
-        assert.strictEqual(errorDiagnostics.length, 4, 
-            `Expected 4 error diagnostics for fallible functions without error handling, got ${errorDiagnostics.length}`);
+        assert.strictEqual(
+            errorDiagnostics.length,
+            4,
+            `Expected 4 error diagnostics for fallible functions without error handling, got ${errorDiagnostics.length}`
+        );
 
         // Check that each error is about missing error handling
         const expectedErrors = ['parse_cef', 'parse_json', 'parse_timestamp', 'to_int'];
-        
+
         expectedErrors.forEach((funcName, index) => {
             const diagnostic = errorDiagnostics[index];
-            assert.ok(diagnostic.message.includes(funcName), 
-                `Expected error for ${funcName}, got: ${diagnostic.message}`);
-            assert.ok(diagnostic.message.includes('error handling'), 
-                `Expected error message to mention error handling, got: ${diagnostic.message}`);
-            assert.strictEqual(diagnostic.severity, vscode.DiagnosticSeverity.Error,
-                `Expected error severity, got ${diagnostic.severity}`);
+            assert.ok(
+                diagnostic.message.includes(funcName),
+                `Expected error for ${funcName}, got: ${diagnostic.message}`
+            );
+            assert.ok(
+                diagnostic.message.includes('error handling'),
+                `Expected error message to mention error handling, got: ${diagnostic.message}`
+            );
+            assert.strictEqual(
+                diagnostic.severity,
+                vscode.DiagnosticSeverity.Error,
+                `Expected error severity, got ${diagnostic.severity}`
+            );
         });
 
         // Clean up
@@ -92,7 +105,7 @@ result, err = to_int(.value)
 
         const doc = await vscode.workspace.openTextDocument({
             content: testContent,
-            language: 'vrl'
+            language: 'vrl',
         });
 
         // Use our own diagnostics collection to avoid conflicts
@@ -101,24 +114,30 @@ result, err = to_int(.value)
         (diagnosticsProvider as any).diagnosticCollection = diagnosticsCollection;
 
         diagnosticsProvider.validateDocument(doc);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         const allDiagnostics = diagnosticsCollection.get(doc.uri) || [];
-        
+
         // Filter for only ERROR severity diagnostics about fallible functions
-        const errorDiagnostics = allDiagnostics.filter(diag => 
-            diag.severity === vscode.DiagnosticSeverity.Error && 
-            diag.message.includes('error handling')
+        const errorDiagnostics = allDiagnostics.filter(
+            (diag) =>
+                diag.severity === vscode.DiagnosticSeverity.Error &&
+                diag.message.includes('error handling')
         );
 
-        console.log(`Found ${allDiagnostics.length} total diagnostics, ${errorDiagnostics.length} error diagnostics for valid usage:`);
+        console.log(
+            `Found ${allDiagnostics.length} total diagnostics, ${errorDiagnostics.length} error diagnostics for valid usage:`
+        );
         errorDiagnostics.forEach((diag, index) => {
             console.log(`  ${index + 1}. Line ${diag.range.start.line}: ${diag.message}`);
         });
 
         // Should have no errors for properly handled fallible functions
-        assert.strictEqual(errorDiagnostics.length, 0, 
-            `Expected no error diagnostics for properly handled fallible functions, got ${errorDiagnostics.length}`);
+        assert.strictEqual(
+            errorDiagnostics.length,
+            0,
+            `Expected no error diagnostics for properly handled fallible functions, got ${errorDiagnostics.length}`
+        );
 
         await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     });
@@ -131,7 +150,7 @@ result, err = to_int(.value)
 
         const doc = await vscode.workspace.openTextDocument({
             content: testContent,
-            language: 'vrl'
+            language: 'vrl',
         });
 
         // Clear any existing diagnostics first
@@ -140,24 +159,30 @@ result, err = to_int(.value)
         });
 
         diagnosticsProvider.validateDocument(doc);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         const allDiagnostics = vscode.languages.getDiagnostics(doc.uri);
-        
+
         // Filter for only ERROR severity diagnostics about unknown functions
-        const unknownFuncDiagnostics = allDiagnostics.filter(diag => 
-            diag.severity === vscode.DiagnosticSeverity.Error && 
-            diag.message.includes('Unknown function')
+        const unknownFuncDiagnostics = allDiagnostics.filter(
+            (diag) =>
+                diag.severity === vscode.DiagnosticSeverity.Error &&
+                diag.message.includes('Unknown function')
         );
 
-        console.log(`Found ${allDiagnostics.length} total diagnostics, ${unknownFuncDiagnostics.length} unknown function diagnostics:`);
+        console.log(
+            `Found ${allDiagnostics.length} total diagnostics, ${unknownFuncDiagnostics.length} unknown function diagnostics:`
+        );
         unknownFuncDiagnostics.forEach((diag, index) => {
             console.log(`  ${index + 1}. Line ${diag.range.start.line}: ${diag.message}`);
         });
 
         // Should detect 2 unknown functions
-        assert.strictEqual(unknownFuncDiagnostics.length, 2, 
-            `Expected 2 diagnostics for unknown functions, got ${unknownFuncDiagnostics.length}`);
+        assert.strictEqual(
+            unknownFuncDiagnostics.length,
+            2,
+            `Expected 2 diagnostics for unknown functions, got ${unknownFuncDiagnostics.length}`
+        );
 
         await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     });
